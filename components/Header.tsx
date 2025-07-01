@@ -11,7 +11,7 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ 
   title = "SHDWBLK OUTBACK", 
-  subtitle = "Minimalist Travel Documentation" 
+  subtitle = "Project Wayfarer" 
 }) => {
   return (
     <LinearGradient
