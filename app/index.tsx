@@ -106,6 +106,7 @@ export default function HomeScreen() {
                 {formatDateRange(activeTrip.startDate, activeTrip.endDate)}
               </Text>
               <Text style={styles.tripDescription}>{activeTrip.description}</Text>
+              <Text style={styles.subtitle}>Project Wayfarer</Text>
 
               {stats?.type === 'countdown' ? (
                 <View style={styles.countdownContainer}>
@@ -120,29 +121,14 @@ export default function HomeScreen() {
                 </View>
               ) : (
                 <View style={styles.statsGrid}>
-                  <View style={styles.statCard}>
-                    <Text style={styles.statValue}>{stats?.distanceTraveled || 0}</Text>
-                    <Text style={styles.statLabel}>Kilometers</Text>
-                  </View>
-                  
-                  <View style={styles.statCard}>
-                    <Text style={styles.statValue}>{stats?.placesVisited || 0}</Text>
-                    <Text style={styles.statLabel}>Places Visited</Text>
-                  </View>
-                  
-                  <View style={styles.statCard}>
-                    <Text style={styles.statValue}>{stats?.photosCount || 0}</Text>
-                    <Text style={styles.statLabel}>Photos</Text>
-                  </View>
-                  
-                  <View style={styles.statCard}>
-                    <Text style={styles.statValue}>
-                      {stats?.isCompleted ? stats.totalDays : `${stats?.daysElapsed || 0}/${stats?.totalDays || 0}`}
-                    </Text>
-                    <Text style={styles.statLabel}>
-                      {stats?.isCompleted ? 'Total Days' : 'Days Progress'}
-                    </Text>
-                  </View>
+                  <StatCard value={stats?.distanceTraveled || 0} label="Kilometers" />
+                  <StatCard value={stats?.placesVisited || 0} label="Places Visited" />
+                  <StatCard value={stats?.photosCount || 0} label="Photos" />
+                  <StatCard value={
+                    stats?.isCompleted ? stats.totalDays : `${stats?.daysElapsed || 0}/${stats?.totalDays || 0}`
+                  } label={
+                    stats?.isCompleted ? 'Total Days' : 'Days Progress'
+                  } />
                 </View>
               )}
             </View>
@@ -351,3 +337,10 @@ const styles = StyleSheet.create({
     minWidth: 200,
   },
 });
+
+const StatCard = ({ value, label }) => (
+  <View style={styles.statCard}>
+    <Text style={styles.statValue}>{value}</Text>
+    <Text style={styles.statLabel}>{label}</Text>
+  </View>
+);
