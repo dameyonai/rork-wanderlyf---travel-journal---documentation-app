@@ -19,6 +19,7 @@ import { Button } from '@/components/Button';
 import { useGearStore } from '@/store/gearStore';
 import { GearCategory } from '@/types/gear';
 import { Camera, Package, X } from 'lucide-react-native';
+import { generateId } from '@/utils/idGenerator';
 
 const categories: GearCategory[] = [
   { id: '1', name: 'Camping', icon: 'tent' },
@@ -69,7 +70,7 @@ export default function NewGearItemScreen() {
     setImageUri(null);
   };
   
-  const handleSubmit = () => {
+  const handleSave = () => {
     if (!name || !selectedCategory) {
       Alert.alert('Validation Error', 'Please fill in the item name and select a category');
       return;
@@ -83,13 +84,15 @@ export default function NewGearItemScreen() {
     
     setIsSubmitting(true);
     
-    // Create new gear item
-    const newItem = {
+    // Create new gear item with proper structure
+    const newItem: GearItem = {
+      id: generateId(),
       name,
       category: selectedCategory,
       weight: weightValue,
       notes: notes || '',
       imageUri: imageUri || undefined,
+      isPacked: false,
     };
     
     // Add to store
@@ -197,7 +200,7 @@ export default function NewGearItemScreen() {
         
         <Button 
           title="Add Item" 
-          onPress={handleSubmit}
+          onPress={handleSave}
           loading={isSubmitting}
           style={styles.submitButton}
         />
