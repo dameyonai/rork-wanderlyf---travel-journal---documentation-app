@@ -6,7 +6,7 @@ import { typography } from '@/constants/typography';
 import { TabBar } from '@/components/TabBar';
 import { useTripStore } from '@/store/tripStore';
 import { useProfileStore } from '@/store/profileStore';
-import { useRouter } from 'next/router';
+import { useRouter } from 'expo-router';
 import { User, Bell, Moon, Database, Shield, HelpCircle, ChevronRight } from 'lucide-react-native';
 
 export default function SettingsScreen() {
