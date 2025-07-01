@@ -17,7 +17,7 @@ import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
 import { Button } from '@/components/Button';
 import { useGearStore } from '@/store/gearStore';
-import { GearCategory } from '@/types/gear';
+import { GearCategory, GearItem } from '@/types/gear';
 import { Camera, Package, X } from 'lucide-react-native';
 import { generateId } from '@/utils/idGenerator';
 
@@ -34,7 +34,7 @@ export default function NewGearItemScreen() {
   const { addGearItem } = useGearStore();
   
   const [name, setName] = useState('');
-  const [weight, setWeight] = useState('');
+  const [weightKg, setWeightKg] = useState('');
   const [notes, setNotes] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [imageUri, setImageUri] = useState<string | null>(null);
@@ -71,34 +71,21 @@ export default function NewGearItemScreen() {
   };
   
   const handleSave = () => {
-    if (!name || !selectedCategory) {
-      Alert.alert('Validation Error', 'Please fill in the item name and select a category');
+    if (!name || !weightKg) {
+      Alert.alert("Missing Info", "Please enter a name and weight for the item.");
       return;
     }
     
-    const weightValue = weight ? parseFloat(weight) : 0;
-    if (weight && (isNaN(weightValue) || weightValue < 0)) {
-      Alert.alert('Invalid Weight', 'Please enter a valid weight in kilograms');
-      return;
-    }
-    
-    setIsSubmitting(true);
-    
-    // Create new gear item with proper structure
     const newItem: GearItem = {
-      id: generateId(),
+      id: Date.now().toString(),
       name,
       category: selectedCategory,
-      weight: weightValue,
-      notes: notes || '',
-      imageUri: imageUri || undefined,
+      weight: parseFloat(weightKg) || 0,
+      notes,
       isPacked: false,
     };
     
-    // Add to store
     addGearItem(newItem);
-    
-    // Navigate back
     router.back();
   };
   
@@ -177,8 +164,8 @@ export default function NewGearItemScreen() {
           <Text style={styles.label}>Weight (kg)</Text>
           <TextInput
             style={styles.input}
-            value={weight}
-            onChangeText={setWeight}
+            value={weightKg}
+            onChangeText={setWeightKg}
             placeholder="0.0"
             placeholderTextColor={colors.text.tertiary}
             keyboardType="decimal-pad"
