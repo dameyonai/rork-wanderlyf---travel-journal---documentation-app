@@ -6,7 +6,7 @@ import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
 import { useTripStore } from '@/store/tripStore';
 import { formatDate } from '@/utils/dateUtils';
-import { MapPin, Calendar, CloudSun, Heart, Edit, Trash } from 'lucide-react-native';
+import { MapPin, Calendar, CloudSun, Heart, Edit, Trash, Camera } from 'lucide-react-native';
 
 export default function JournalEntryDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -36,6 +36,10 @@ export default function JournalEntryDetailScreen() {
     router.push(`/journal/edit/${entry.id}`);
   };
   
+  const handleChangePhoto = () => {
+    router.push(`/journal/edit/${entry.id}`);
+  };
+
   const handleDelete = () => {
     Alert.alert(
       "Delete Entry",
@@ -65,14 +69,29 @@ export default function JournalEntryDetailScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {entry.imageUri && (
+        {entry.imageUri ? (
           <View style={styles.imageContainer}>
             <Image 
               source={{ uri: entry.imageUri }} 
               style={styles.image}
               resizeMode="cover"
             />
+            <TouchableOpacity 
+              style={styles.changePhotoButton}
+              onPress={handleChangePhoto}
+            >
+              <Camera size={16} color="white" />
+              <Text style={styles.changePhotoText}>Change Photo</Text>
+            </TouchableOpacity>
           </View>
+        ) : (
+          <TouchableOpacity 
+            style={styles.addPhotoContainer}
+            onPress={handleChangePhoto}
+          >
+            <Camera size={48} color={colors.text.tertiary} />
+            <Text style={styles.addPhotoText}>Tap to add photo</Text>
+          </TouchableOpacity>
         )}
         
         <View style={styles.content}>
@@ -253,5 +272,35 @@ const styles = StyleSheet.create({
   },
   deleteButtonText: {
     color: colors.error,
+  },
+  changePhotoButton: {
+    position: 'absolute',
+    bottom: 16,
+    right: 16,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    borderRadius: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  changePhotoText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  addPhotoContainer: {
+    height: 200,
+    backgroundColor: colors.background.secondary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  addPhotoText: {
+    color: colors.text.tertiary,
+    marginTop: 8,
+    fontSize: 16,
   },
 });

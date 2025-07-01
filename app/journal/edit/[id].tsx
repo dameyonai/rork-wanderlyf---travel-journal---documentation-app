@@ -17,7 +17,7 @@ import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
 import { Button } from '@/components/Button';
 import { useTripStore } from '@/store/tripStore';
-import { Camera, MapPin, Tag, X } from 'lucide-react-native';
+import { Camera, MapPin, Tag, X, Trash2 } from 'lucide-react-native';
 
 const categories = [
   "Today's Drive",

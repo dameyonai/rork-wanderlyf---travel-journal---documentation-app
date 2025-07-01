@@ -6,7 +6,7 @@ import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
 import { Card } from './Card';
 import { formatDate } from '@/utils/dateUtils';
-import { Edit } from 'lucide-react-native';
+import { Edit, Camera } from 'lucide-react-native';
 import { Feather } from '@expo/vector-icons';
 
 interface JournalEntryCardProps {
@@ -45,13 +45,20 @@ export const JournalEntryCard: React.FC<JournalEntryCardProps> = ({
             >
               <Edit size={16} color="white" />
             </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.photoIndicator}
+              onPress={handleEdit}
+            >
+              <Camera size={14} color="white" />
+            </TouchableOpacity>
           </View>
         ) : (
           <View style={[
             compact ? styles.compactImagePlaceholder : styles.imagePlaceholder,
             styles.imagePlaceholderContent
           ]}>
-            <Text style={styles.imagePlaceholderText}>No Image</Text>
+            <Camera size={32} color={colors.text.tertiary} />
+            <Text style={styles.imagePlaceholderText}>Tap to add photo</Text>
             <TouchableOpacity 
               style={styles.editOverlay}
               onPress={handleEdit}
@@ -177,5 +184,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
     borderRadius: 16,
     padding: 8,
+  },
+  photoIndicator: {
+    position: 'absolute',
+    bottom: 8,
+    right: 8,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    borderRadius: 12,
+    padding: 6,
   },
 });
