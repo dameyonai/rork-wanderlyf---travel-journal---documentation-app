@@ -5,18 +5,18 @@ import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
 import { TabBar } from '@/components/TabBar';
 import { useTripStore } from '@/store/tripStore';
-import { 
-  User, 
-  Bell, 
-  Moon, 
-  Database, 
-  Shield, 
-  HelpCircle,
-  ChevronRight,
-} from 'lucide-react-native';
+import { useProfileStore } from '@/store/profileStore';
+import { useRouter } from 'next/router';
+import { User, Bell, Moon, Database, Shield, HelpCircle, ChevronRight } from 'lucide-react-native';
 
 export default function SettingsScreen() {
   const { trips } = useTripStore();
+  const { name } = useProfileStore();
+  const router = useRouter();
+  
+  const handleEditProfile = () => {
+    router.push('/settings/profile');
+  };
   
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
@@ -30,12 +30,12 @@ export default function SettingsScreen() {
             <User size={32} color={colors.text.primary} />
           </View>
           <View style={styles.profileInfo}>
-            <Text style={styles.profileName}>Traveler</Text>
+            <Text style={styles.profileName}>{name}</Text>
             <Text style={styles.profileStats}>
               {trips.length} trips • {trips.reduce((total, trip) => total + trip.stats.daysOnTrip, 0)} days
             </Text>
           </View>
-          <TouchableOpacity style={styles.editButton}>
+          <TouchableOpacity style={styles.editButton} onPress={handleEditProfile}>
             <Text style={styles.editButtonText}>Edit</Text>
           </TouchableOpacity>
         </View>

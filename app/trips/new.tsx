@@ -20,6 +20,7 @@ import { useTripStore } from '@/store/tripStore';
 import { generateId } from '@/utils/idGenerator';
 import { calculateDaysBetween } from '@/utils/dateUtils';
 import { Camera, Calendar, X } from 'lucide-react-native';
+import { DatePicker } from '@/components/DatePicker';
 
 export default function NewTripScreen() {
   const router = useRouter();
@@ -60,10 +61,9 @@ export default function NewTripScreen() {
       return;
     }
     
-    // Validate date format (YYYY-MM-DD)
-    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-    if (!dateRegex.test(startDate) || !dateRegex.test(endDate)) {
-      Alert.alert('Invalid Date Format', 'Please use YYYY-MM-DD format for dates');
+    // Validate that end date is after start date
+    if (new Date(endDate) <= new Date(startDate)) {
+      Alert.alert('Invalid Dates', 'End date must be after start date');
       return;
     }
     
@@ -154,31 +154,21 @@ export default function NewTripScreen() {
         
         <View style={styles.dateContainer}>
           <View style={styles.dateField}>
-            <Text style={styles.label}>Start Date</Text>
-            <View style={styles.inputWithIcon}>
-              <Calendar size={18} color={colors.text.secondary} style={styles.inputIcon} />
-              <TextInput
-                style={styles.inputText}
-                value={startDate}
-                onChangeText={setStartDate}
-                placeholder="YYYY-MM-DD"
-                placeholderTextColor={colors.text.tertiary}
-              />
-            </View>
+            <DatePicker
+              label="Start Date"
+              value={startDate}
+              onDateChange={setStartDate}
+              placeholder="Select start date"
+            />
           </View>
           
           <View style={styles.dateField}>
-            <Text style={styles.label}>End Date</Text>
-            <View style={styles.inputWithIcon}>
-              <Calendar size={18} color={colors.text.secondary} style={styles.inputIcon} />
-              <TextInput
-                style={styles.inputText}
-                value={endDate}
-                onChangeText={setEndDate}
-                placeholder="YYYY-MM-DD"
-                placeholderTextColor={colors.text.tertiary}
-              />
-            </View>
+            <DatePicker
+              label="End Date"
+              value={endDate}
+              onDateChange={setEndDate}
+              placeholder="Select end date"
+            />
           </View>
         </View>
         
@@ -287,30 +277,6 @@ const styles = StyleSheet.create({
   },
   dateField: {
     flex: 1,
-  },
-  inputWithIcon: {
-    backgroundColor: colors.background.input,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: colors.border,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  inputIcon: {
-    marginRight: 12,
-  },
-  inputText: {
-    flex: 1,
-    color: colors.text.primary,
-    fontSize: 16,
-    padding: 0,
-    ...Platform.select({
-      web: {
-        outlineStyle: 'none',
-      },
-    }),
   },
   submitButton: {
     marginTop: 16,

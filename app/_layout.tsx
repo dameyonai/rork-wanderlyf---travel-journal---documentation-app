@@ -109,6 +109,14 @@ export default function RootLayout() {
           }} 
         />
         <Stack.Screen 
+          name="settings/profile" 
+          options={{ 
+            title: 'Edit Profile',
+            headerBackTitle: 'Settings',
+            presentation: 'modal',
+          }} 
+        />
+        <Stack.Screen 
           name="trips/new" 
           options={{ 
             title: 'New Trip',
