@@ -11,6 +11,7 @@ import { JournalEntryCard } from '@/components/JournalEntryCard';
 import { TabBar } from '@/components/TabBar';
 import { useTripStore } from '@/store/tripStore';
 import { Plus, Filter } from 'lucide-react-native';
+import { formatDateRange } from '@/utils/dateUtils';
 
 export default function HomeScreen() {
   const router = useRouter();
