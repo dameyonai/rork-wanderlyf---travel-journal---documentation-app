@@ -17,7 +17,7 @@ import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
 import { Button } from '@/components/Button';
 import { useGearStore } from '@/store/gearStore';
-import { GearCategory, GearItem } from '@/types/gear';
+import type { GearCategory, GearItem } from '@/types/gear';
 import { Camera, Package, X } from 'lucide-react-native';
 import { generateId } from '@/utils/idGenerator';
 
