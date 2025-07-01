@@ -225,6 +225,11 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     marginBottom: 20,
   },
+  subtitle: {
+    color: colors.text.secondary,
+    fontSize: 14,
+    marginTop: 4,
+  },
   countdownContainer: {
     alignItems: 'center',
     paddingVertical: 20,
@@ -339,7 +344,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const StatCard = ({ value, label }) => (
+const StatCard = ({ value, label }: { value: string | number; label: string }) => (
   <View style={styles.statCard}>
     <Text style={styles.statValue}>{value}</Text>
     <Text style={styles.statLabel}>{label}</Text>
