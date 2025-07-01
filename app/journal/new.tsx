@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   View, 
   Text, 
@@ -9,6 +9,7 @@ import {
   Image,
   Platform,
   Alert,
+  useNavigation
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -18,7 +19,7 @@ import { typography } from '@/constants/typography';
 import { Button } from '@/components/Button';
 import { useTripStore } from '@/store/tripStore';
 import { generateId } from '@/utils/idGenerator';
-import { Camera, MapPin, Tag, X } from 'lucide-react-native';
+import { Camera, MapPin, Calendar, Tag, X } from 'lucide-react-native';
 
 const categories = [
   "Today's Drive",
@@ -37,10 +38,25 @@ export default function NewJournalEntryScreen() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [location, setLocation] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const [category, setCategory] = useState('');
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
+  // Handle location selection from map picker
+  useEffect(() => {
+    const params = router.params as any;
+    if (params?.locationName && params?.latitude && params?.longitude) {
+      const locationData: Location = {
+        name: params.locationName,
+        latitude: parseFloat(params.latitude),
+        longitude: parseFloat(params.longitude),
+      };
+      setSelectedLocation(locationData);
+      setLocation(params.locationName);
+    }
+  }, [router.params]);
+
   const handlePickImage = async () => {
     try {
       // Request permissions for non-web platforms
@@ -72,6 +88,10 @@ export default function NewJournalEntryScreen() {
     setImageUri(null);
   };
   
+  const handleLocationPicker = () => {
+    router.push('/map/picker');
+  };
+  
   const handleSubmit = () => {
     if (!title || !content || !location || !category) {
       Alert.alert('Validation Error', 'Please fill in all required fields');
@@ -92,7 +112,7 @@ export default function NewJournalEntryScreen() {
       title,
       content,
       date: new Date().toISOString().split('T')[0], // Today's date in YYYY-MM-DD format
-      location: {
+      location: selectedLocation || {
         latitude: 0, // In a real app, we would get actual coordinates
         longitude: 0,
         name: location,
@@ -151,16 +171,18 @@ export default function NewJournalEntryScreen() {
         
         <View style={styles.formGroup}>
           <Text style={styles.label}>Location</Text>
-          <View style={styles.inputWithIcon}>
+          <TouchableOpacity 
+            style={styles.inputWithIcon}
+            onPress={handleLocationPicker}
+          >
             <MapPin size={18} color={colors.text.secondary} style={styles.inputIcon} />
-            <TextInput
-              style={styles.inputText}
-              value={location}
-              onChangeText={setLocation}
-              placeholder="Where are you?"
-              placeholderTextColor={colors.text.tertiary}
-            />
-          </View>
+            <Text style={[
+              styles.inputText,
+              !location && styles.placeholderText
+            ]}>
+              {location || 'Select location on map'}
+            </Text>
+          </TouchableOpacity>
         </View>
         
         <View style={styles.formGroup}>
@@ -348,5 +370,8 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     marginTop: 16,
+  },
+  placeholderText: {
+    color: colors.text.tertiary,
   },
 });

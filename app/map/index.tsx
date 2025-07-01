@@ -18,11 +18,12 @@ export default function MapScreen() {
     <SafeAreaView style={styles.container} edges={['bottom']}>
       <View style={styles.mapContainer}>
         <View style={styles.mapPlaceholder}>
+          <MapPin size={48} color={colors.accent.primary} />
           <Text style={styles.mapPlaceholderText}>
-            Map View
+            Interactive Map View
           </Text>
           <Text style={styles.mapPlaceholderSubtext}>
-            (In a real app, this would be an interactive map)
+            Shows all journal entry locations
           </Text>
           
           {activeTrip && activeTrip.locations.map((location, index) => (
@@ -36,7 +37,9 @@ export default function MapScreen() {
                 }
               ]}
             >
-              <MapPin size={24} color={colors.accent.primary} />
+              <View style={styles.pinIcon}>
+                <MapPin size={16} color={colors.accent.primary} />
+              </View>
             </View>
           ))}
         </View>
@@ -105,6 +108,14 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 24,
     height: 24,
+  },
+  pinIcon: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: `${colors.accent.primary}20`,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   locationsContainer: {
     flex: 1,

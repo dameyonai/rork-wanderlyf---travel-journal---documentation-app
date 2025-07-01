@@ -37,6 +37,7 @@ export default function EditJournalEntryScreen() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [location, setLocation] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const [category, setCategory] = useState('');
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -50,15 +51,29 @@ export default function EditJournalEntryScreen() {
       setTitle(entry.title);
       setContent(entry.content);
       setLocation(entry.location.name);
+      setSelectedLocation(entry.location);
       setCategory(entry.category);
       setImageUri(entry.imageUri || null);
     } else {
-      // Entry not found, go back
       Alert.alert('Error', 'Entry not found');
       router.back();
     }
   }, [entry]);
-  
+
+  // Handle location selection from map picker
+  useEffect(() => {
+    const params = router.params as any;
+    if (params?.locationName && params?.latitude && params?.longitude) {
+      const locationData: Location = {
+        name: params.locationName,
+        latitude: parseFloat(params.latitude),
+        longitude: parseFloat(params.longitude),
+      };
+      setSelectedLocation(locationData);
+      setLocation(params.locationName);
+    }
+  }, [router.params]);
+
   const handlePickImage = async () => {
     try {
       // Request permissions for non-web platforms
@@ -97,6 +112,10 @@ export default function EditJournalEntryScreen() {
     );
   };
   
+  const handleLocationPicker = () => {
+    router.push('/map/picker');
+  };
+  
   const handleSubmit = () => {
     if (!title || !content || !location || !category) {
       Alert.alert('Validation Error', 'Please fill in all required fields');
@@ -115,16 +134,13 @@ export default function EditJournalEntryScreen() {
       content,
       category,
       imageUri: imageUri || undefined,
-      location: {
+      location: selectedLocation || {
         ...entry.location,
         name: location,
       },
     };
     
-    // Update in store
     updateJournalEntry(entry.id, updatedEntry);
-    
-    // Navigate back to entry detail
     router.back();
   };
   
@@ -175,16 +191,18 @@ export default function EditJournalEntryScreen() {
         
         <View style={styles.formGroup}>
           <Text style={styles.label}>Location</Text>
-          <View style={styles.inputWithIcon}>
+          <TouchableOpacity 
+            style={styles.inputWithIcon}
+            onPress={handleLocationPicker}
+          >
             <MapPin size={18} color={colors.text.secondary} style={styles.inputIcon} />
-            <TextInput
-              style={styles.inputText}
-              value={location}
-              onChangeText={setLocation}
-              placeholder="Where are you?"
-              placeholderTextColor={colors.text.tertiary}
-            />
-          </View>
+            <Text style={[
+              styles.inputText,
+              !location && styles.placeholderText
+            ]}>
+              {location || 'Select location on map'}
+            </Text>
+          </TouchableOpacity>
         </View>
         
         <View style={styles.formGroup}>
@@ -372,5 +390,8 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     marginTop: 16,
+  },
+  placeholderText: {
+    color: colors.text.tertiary,
   },
 });
