@@ -17,7 +17,7 @@ import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
 import { Button } from '@/components/Button';
 import { useTripStore } from '@/store/tripStore';
-import { Camera, MapPin, Tag, X, Trash2 } from 'lucide-react-native';
+import { Camera, MapPin, Tag, X } from 'lucide-react-native';
 
 const categories = [
   "Today's Drive",
@@ -255,17 +255,143 @@ export default function EditJournalEntryScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 20, paddingTop: 10, borderBottomWidth: 1, borderBottomColor: colors.border },
-  cancelButton: { color: colors.primary, fontSize: 16 },
-  headerTitle: { color: colors.text, fontSize: 18, fontWeight: '600' },
-  saveButton: { color: colors.primary, fontSize: 16, fontWeight: 'bold' },
-  formContainer: { padding: 20 },
-  imagePicker: { height: 200, backgroundColor: colors.surface, borderRadius: 12, justifyContent: 'center', alignItems: 'center', marginBottom: 20 },
-  imagePickerText: { color: colors.textMuted, fontSize: 18 },
-  imagePreview: { width: '100%', height: '100%', borderRadius: 12 },
-  input: { backgroundColor: colors.surface, color: colors.text, padding: 15, borderRadius: 8, fontSize: 16, marginBottom: 15, borderWidth: 1, borderColor: colors.border },
-  contentInput: { height: 150, textAlignVertical: 'top' },
-  locationPicker: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surface, padding: 15, borderRadius: 8, marginBottom: 15, borderWidth: 1, borderColor: colors.border, gap: 10 },
-  locationText: { color: colors.text, fontSize: 16 }
+  container: {
+    flex: 1,
+    backgroundColor: colors.background.primary,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    padding: 20,
+    paddingBottom: 40,
+  },
+  imageContainer: {
+    marginBottom: 24,
+  },
+  imagePicker: {
+    height: 200,
+    backgroundColor: colors.background.secondary,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderStyle: 'dashed',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  imagePickerText: {
+    ...typography.caption,
+    marginTop: 8,
+  },
+  imagePreviewContainer: {
+    position: 'relative',
+    height: 200,
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  imagePreview: {
+    width: '100%',
+    height: '100%',
+  },
+  removeImageButton: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  formGroup: {
+    marginBottom: 24,
+  },
+  label: {
+    ...typography.caption,
+    marginBottom: 8,
+  },
+  input: {
+    backgroundColor: colors.background.input,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.border,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    color: colors.text.primary,
+    fontSize: 16,
+  },
+  inputWithIcon: {
+    backgroundColor: colors.background.input,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.border,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  inputIcon: {
+    marginRight: 12,
+  },
+  inputText: {
+    flex: 1,
+    color: colors.text.primary,
+    fontSize: 16,
+    padding: 0,
+    ...Platform.select({
+      web: {
+        outlineStyle: 'none',
+      },
+    }),
+  },
+  placeholderText: {
+    color: colors.text.tertiary,
+  },
+  categoriesContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  categoryButton: {
+    backgroundColor: colors.background.input,
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderWidth: 1,
+    borderColor: colors.border,
+    marginBottom: 8,
+  },
+  selectedCategoryButton: {
+    backgroundColor: `${colors.accent.primary}20`,
+    borderColor: colors.accent.primary,
+  },
+  categoryButtonText: {
+    color: colors.text.secondary,
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  selectedCategoryButtonText: {
+    color: colors.accent.primary,
+    fontWeight: '600',
+  },
+  textArea: {
+    backgroundColor: colors.background.input,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.border,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    color: colors.text.primary,
+    fontSize: 16,
+    minHeight: 150,
+    ...Platform.select({
+      web: {
+        outlineStyle: 'none',
+      },
+    }),
+  },
+  submitButton: {
+    marginTop: 16,
+  },
 });
