@@ -7,6 +7,7 @@ import { typography } from '@/constants/typography';
 import { Card } from './Card';
 import { formatDate } from '@/utils/dateUtils';
 import { Edit } from 'lucide-react-native';
+import { Feather } from '@expo/vector-icons';
 
 interface JournalEntryCardProps {
   entry: JournalEntry;
@@ -64,7 +65,10 @@ export const JournalEntryCard: React.FC<JournalEntryCardProps> = ({
           <View style={styles.header}>
             <View>
               <Text style={styles.date}>{formatDate(entry.date)}</Text>
-              <Text style={styles.location}>{entry.location.name}</Text>
+              <View style={styles.locationContainer}>
+                <Feather name="map-pin" size={12} color={colors.text.tertiary} />
+                <Text style={styles.location}>{entry.location.name}</Text>
+              </View>
             </View>
             <View style={styles.categoryContainer}>
               <Text style={styles.category}>{entry.category}</Text>
@@ -135,6 +139,11 @@ const styles = StyleSheet.create({
   location: {
     color: colors.text.tertiary,
     fontSize: 13,
+    marginLeft: 4,
+  },
+  locationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginTop: 2,
   },
   categoryContainer: {
