@@ -30,126 +30,98 @@ const categories = [
 ];
 
 export default function EditJournalEntryScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const params = useLocalSearchParams<{ id: string, locationName?: string, latitude?: string, longitude?: string }>();
+  
   const { journalEntries, updateJournalEntry } = useTripStore();
   
+  const entry = journalEntries.find(e => e.id === params.id);
+
   const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [location, setLocation] = useState('');
-  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
+  const [location, setLocation] = useState<Location | undefined>();
   const [category, setCategory] = useState('');
-  const [imageUri, setImageUri] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [content, setContent] = useState('');
+  const [imageUri, setImageUri] = useState<string | undefined>();
   
-  // Find the entry to edit
-  const entry = journalEntries.find(entry => entry.id === id);
-  
-  // Load entry data when component mounts
   useEffect(() => {
     if (entry) {
       setTitle(entry.title);
-      setContent(entry.content);
-      setLocation(entry.location.name);
-      setSelectedLocation(entry.location);
+      setLocation(entry.location); 
       setCategory(entry.category);
-      setImageUri(entry.imageUri || null);
-    } else {
-      Alert.alert('Error', 'Entry not found');
-      router.back();
+      setContent(entry.content);
+      setImageUri(entry.imageUri);
     }
   }, [entry]);
 
-  // Handle location selection from map picker
   useEffect(() => {
-    const params = router.params as any;
-    if (params?.locationName && params?.latitude && params?.longitude) {
-      const locationData: Location = {
+    if (params.locationName && params.latitude && params.longitude) {
+      const newLocation: Location = {
         name: params.locationName,
         latitude: parseFloat(params.latitude),
         longitude: parseFloat(params.longitude),
       };
-      setSelectedLocation(locationData);
-      setLocation(params.locationName);
+      setLocation(newLocation);
     }
-  }, [router.params]);
+  }, [params.locationName, params.latitude, params.longitude]);
 
-  const handlePickImage = async () => {
+  const pickImage = async () => {
     try {
-      // Request permissions for non-web platforms
       if (Platform.OS !== 'web') {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== 'granted') {
-          Alert.alert('Permission Required', 'Sorry, we need camera roll permissions to change photos.');
+          Alert.alert('Permission Denied', 'Sorry, we need camera roll permissions to make this work!');
           return;
         }
       }
 
-      const result = await ImagePicker.launchImageLibraryAsync({
+      let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
-        aspect: [16, 9],
-        quality: 0.8,
+        aspect: [4, 3],
+        quality: 1,
       });
-      
+
       if (!result.canceled) {
         setImageUri(result.assets[0].uri);
       }
     } catch (error) {
       Alert.alert('Error', 'Failed to pick image');
-      console.error('Image picker error:', error);
     }
   };
-  
-  const handleRemoveImage = () => {
-    Alert.alert(
-      'Remove Photo',
-      'Are you sure you want to remove this photo?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Remove', style: 'destructive', onPress: () => setImageUri(null) }
-      ]
-    );
-  };
-  
-  const handleLocationPicker = () => {
-    router.push('/map/picker');
-  };
-  
-  const handleSubmit = () => {
-    if (!title || !content || !location || !category) {
-      Alert.alert('Validation Error', 'Please fill in all required fields');
-      return;
-    }
-    
+
+  const handleSave = () => {
     if (!entry) {
-      return;
+        Alert.alert("Error", "Could not find the entry to update.");
+        return;
     }
-    
-    setIsSubmitting(true);
-    
-    // Update journal entry
-    const updatedEntry = {
-      title,
-      content,
-      category,
-      imageUri: imageUri || undefined,
-      location: selectedLocation || {
-        ...entry.location,
-        name: location,
-      },
-    };
-    
+    if (!title || !content || !location) {
+        Alert.alert("Validation Error", "Please fill in all fields and select a location.");
+        return;
+    }
+
+    const updatedEntry: JournalEntry = {
+        ...entry,
+        title,
+        location,
+        category,
+        content,
+        imageUri,
+    }
+
     updateJournalEntry(entry.id, updatedEntry);
     router.back();
   };
-  
+
   if (!entry) {
-    return null; // Will redirect in useEffect
+      return (
+          <SafeAreaView style={styles.container}>
+              <Text style={{color: colors.text.primary, textAlign: 'center', marginTop: 50}}>Entry not found.</Text>
+          </SafeAreaView>
+      )
   }
-  
+
   return (
-    <SafeAreaView style={styles.container} edges={['bottom']}>
+    <SafeAreaView style={styles.container}>
       <ScrollView 
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
@@ -162,18 +134,17 @@ export default function EditJournalEntryScreen() {
               <Image source={{ uri: imageUri }} style={styles.imagePreview} />
               <TouchableOpacity 
                 style={styles.removeImageButton}
-                onPress={handleRemoveImage}
+                onPress={() => setImageUri(undefined)}
               >
-                <X size={20} color="white" />
+                <Text style={{ color: 'white', fontSize: 20 }}>×</Text>
               </TouchableOpacity>
             </View>
           ) : (
             <TouchableOpacity 
               style={styles.imagePicker}
-              onPress={handlePickImage}
+              onPress={pickImage}
             >
-              <Camera size={32} color={colors.text.secondary} />
-              <Text style={styles.imagePickerText}>Add Photo</Text>
+              <Text style={styles.imagePickerText}>+ Change Photo</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -193,14 +164,14 @@ export default function EditJournalEntryScreen() {
           <Text style={styles.label}>Location</Text>
           <TouchableOpacity 
             style={styles.inputWithIcon}
-            onPress={handleLocationPicker}
+            onPress={() => router.push('/map/picker')}
           >
-            <MapPin size={18} color={colors.text.secondary} style={styles.inputIcon} />
+            <Text style={styles.inputIcon}>📍</Text>
             <Text style={[
               styles.inputText,
               !location && styles.placeholderText
             ]}>
-              {location || 'Select location on map'}
+              {location ? location.name : 'Select location on map'}
             </Text>
           </TouchableOpacity>
         </View>
@@ -243,12 +214,12 @@ export default function EditJournalEntryScreen() {
           />
         </View>
         
-        <Button 
-          title="Save Changes" 
-          onPress={handleSubmit}
-          loading={isSubmitting}
+        <TouchableOpacity 
           style={styles.submitButton}
-        />
+          onPress={handleSave}
+        >
+          <Text style={styles.submitButtonText}>Save Changes</Text>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
@@ -280,8 +251,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   imagePickerText: {
-    ...typography.caption,
-    marginTop: 8,
+    color: colors.text.secondary,
+    fontSize: 18,
   },
   imagePreviewContainer: {
     position: 'relative',
@@ -308,7 +279,9 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   label: {
-    ...typography.caption,
+    color: colors.text.secondary,
+    fontSize: 14,
+    fontWeight: '500',
     marginBottom: 8,
   },
   input: {
@@ -333,17 +306,12 @@ const styles = StyleSheet.create({
   },
   inputIcon: {
     marginRight: 12,
+    fontSize: 16,
   },
   inputText: {
     flex: 1,
     color: colors.text.primary,
     fontSize: 16,
-    padding: 0,
-    ...Platform.select({
-      web: {
-        outlineStyle: 'none',
-      },
-    }),
   },
   placeholderText: {
     color: colors.text.tertiary,
@@ -392,6 +360,16 @@ const styles = StyleSheet.create({
     }),
   },
   submitButton: {
+    backgroundColor: colors.accent.primary,
+    borderRadius: 25,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    alignItems: 'center',
     marginTop: 16,
+  },
+  submitButtonText: {
+    color: 'white',
+    fontWeight: '600',
+    fontSize: 16,
   },
 });
