@@ -6,7 +6,7 @@ import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
 import { Card } from './Card';
 import { formatDate } from '@/utils/dateUtils';
-import { Edit } from 'react-native-vector-icons';
+import { Edit } from 'lucide-react-native';
 
 interface JournalEntryCardProps {
   entry: JournalEntry;

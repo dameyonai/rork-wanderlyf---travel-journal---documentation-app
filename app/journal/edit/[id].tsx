@@ -61,7 +61,7 @@ export default function EditJournalEntryScreen() {
   
   const handlePickImage = async () => {
     try {
-      // Request permissions
+      // Request permissions for non-web platforms
       if (Platform.OS !== 'web') {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== 'granted') {
