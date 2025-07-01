@@ -10,7 +10,7 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ 
-  title = "wan̈đerłyf", 
+  title = "SHDWBLK OUTBACK", 
   subtitle = "Minimalist Travel Documentation" 
 }) => {
   return (
