@@ -79,7 +79,25 @@ export default function SettingsScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.profileSection}>
-          <TouchableOpacity style={styles.profileAvatar} onPress={handlePhotoSelect}>
+          <TouchableOpacity style={styles.profileAvatar} onPress={async () => {
+            try {
+              const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+              if (status !== 'granted') return;
+              
+              const result = await ImagePicker.launchImageLibraryAsync({
+                quality: 0.7,
+                allowsEditing: true,
+                aspect: [1, 1],
+              });
+              
+              if (!result.canceled) {
+                setPhotoUri(result.assets[0].uri);
+                await AsyncStorage.setItem('profile:photoUri', result.assets[0].uri);
+              }
+            } catch (error) {
+              console.error('Error selecting photo:', error);
+            }
+          }}>
             {photoUri ? (
               <Image source={{ uri: photoUri }} style={styles.avatarImage} />
             ) : (
