@@ -5,13 +5,13 @@ export const mockTrips: Trip[] = [
     id: '1',
     title: 'NT Outback Journey 2025',
     description: 'Documenting the road trip across the Northern Territory, visiting remote communities and capturing the raw beauty of the Australian outback.',
-    startDate: '2025-06-26',
-    endDate: '2025-07-15',
+    startDate: '2025-07-10', // Changed to future date to show countdown
+    endDate: '2025-07-29',
     coverImageUri: 'https://images.unsplash.com/photo-1529108190281-9a4f620bc2d8?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
     stats: {
-      distanceTraveled: 2891,
-      placesVisited: 12,
-      photosCount: 159,
+      distanceTraveled: 0, // Reset to 0 since trip hasn't started
+      placesVisited: 0,
+      photosCount: 0,
       daysOnTrip: 19,
     },
     locations: [

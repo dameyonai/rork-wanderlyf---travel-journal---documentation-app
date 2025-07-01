@@ -19,6 +19,49 @@ export default function HomeScreen() {
   const recentEntries = activeTrip 
     ? getEntriesForTrip(activeTrip.id).slice(0, 3)
     : [];
+
+  // Calculate actual stats based on current data
+  const getActualStats = () => {
+    if (!activeTrip) return null;
+    
+    const tripEntries = getEntriesForTrip(activeTrip.id);
+    const now = new Date();
+    const startDate = new Date(activeTrip.startDate);
+    const endDate = new Date(activeTrip.endDate);
+    
+    // Check if trip hasn't started yet
+    if (now < startDate) {
+      const daysUntilStart = Math.ceil((startDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+      return {
+        type: 'countdown',
+        daysUntilStart,
+        totalDays: Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1,
+      };
+    }
+    
+    // Trip is in progress or completed
+    const photosCount = tripEntries.filter(entry => entry.imageUri).length;
+    const uniqueLocations = new Set(tripEntries.map(entry => entry.location.name));
+    const placesVisited = uniqueLocations.size;
+    
+    // Calculate days elapsed
+    const daysElapsed = Math.min(
+      Math.ceil((now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)),
+      Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1
+    );
+    
+    return {
+      type: 'active',
+      distanceTraveled: activeTrip.stats.distanceTraveled || 0,
+      placesVisited,
+      photosCount,
+      daysElapsed,
+      totalDays: Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1,
+      isCompleted: now > endDate,
+    };
+  };
+
+  const stats = getActualStats();
   
   const handleNewEntry = () => {
     router.push('/journal/new');
@@ -31,7 +74,7 @@ export default function HomeScreen() {
   const handleNewTrip = () => {
     router.push('/trips/new');
   };
-  
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <Header />
@@ -55,6 +98,53 @@ export default function HomeScreen() {
                 onPress={handleViewAllEntries}
                 style={styles.actionButton}
               />
+            </View>
+            
+            <View style={styles.tripCard}>
+              <Text style={styles.tripTitle}>{activeTrip.title}</Text>
+              <Text style={styles.tripDates}>
+                {formatDateRange(activeTrip.startDate, activeTrip.endDate)}
+              </Text>
+              <Text style={styles.tripDescription}>{activeTrip.description}</Text>
+
+              {stats?.type === 'countdown' ? (
+                <View style={styles.countdownContainer}>
+                  <Text style={styles.countdownTitle}>Trip starts in</Text>
+                  <Text style={styles.countdownDays}>{stats.daysUntilStart}</Text>
+                  <Text style={styles.countdownLabel}>
+                    {stats.daysUntilStart === 1 ? 'day' : 'days'}
+                  </Text>
+                  <Text style={styles.countdownSubtext}>
+                    {stats.totalDays} day trip planned
+                  </Text>
+                </View>
+              ) : (
+                <View style={styles.statsGrid}>
+                  <View style={styles.statCard}>
+                    <Text style={styles.statValue}>{stats?.distanceTraveled || 0}</Text>
+                    <Text style={styles.statLabel}>Kilometers</Text>
+                  </View>
+                  
+                  <View style={styles.statCard}>
+                    <Text style={styles.statValue}>{stats?.placesVisited || 0}</Text>
+                    <Text style={styles.statLabel}>Places Visited</Text>
+                  </View>
+                  
+                  <View style={styles.statCard}>
+                    <Text style={styles.statValue}>{stats?.photosCount || 0}</Text>
+                    <Text style={styles.statLabel}>Photos</Text>
+                  </View>
+                  
+                  <View style={styles.statCard}>
+                    <Text style={styles.statValue}>
+                      {stats?.isCompleted ? stats.totalDays : `${stats?.daysElapsed || 0}/${stats?.totalDays || 0}`}
+                    </Text>
+                    <Text style={styles.statLabel}>
+                      {stats?.isCompleted ? 'Total Days' : 'Days Progress'}
+                    </Text>
+                  </View>
+                </View>
+              )}
             </View>
             
             <TripHeader trip={activeTrip} />
@@ -122,6 +212,87 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     flex: 1,
+  },
+  tripCard: {
+    backgroundColor: colors.background.card,
+    borderRadius: 16,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: colors.border,
+    marginBottom: 16,
+  },
+  tripTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: colors.accent.primary,
+    marginBottom: 8,
+  },
+  tripDates: {
+    color: colors.text.secondary,
+    fontSize: 14,
+    fontWeight: '500',
+    marginBottom: 12,
+  },
+  tripDescription: {
+    color: colors.text.secondary,
+    lineHeight: 22,
+    marginBottom: 20,
+  },
+  countdownContainer: {
+    alignItems: 'center',
+    paddingVertical: 20,
+    backgroundColor: `${colors.accent.primary}10`,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: `${colors.accent.primary}30`,
+  },
+  countdownTitle: {
+    fontSize: 16,
+    color: colors.text.secondary,
+    marginBottom: 8,
+  },
+  countdownDays: {
+    fontSize: 48,
+    fontWeight: '800',
+    color: colors.accent.primary,
+    lineHeight: 52,
+  },
+  countdownLabel: {
+    fontSize: 18,
+    color: colors.accent.primary,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  countdownSubtext: {
+    fontSize: 14,
+    color: colors.text.tertiary,
+  },
+  statsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+  },
+  statCard: {
+    flex: 1,
+    minWidth: '45%',
+    backgroundColor: `${colors.accent.primary}10`,
+    borderWidth: 1,
+    borderColor: `${colors.accent.primary}30`,
+    borderRadius: 12,
+    padding: 12,
+    alignItems: 'center',
+  },
+  statValue: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: colors.accent.primary,
+    marginBottom: 4,
+  },
+  statLabel: {
+    fontSize: 12,
+    color: colors.text.secondary,
+    fontWeight: '500',
+    textAlign: 'center',
   },
   sectionHeader: {
     flexDirection: 'row',
