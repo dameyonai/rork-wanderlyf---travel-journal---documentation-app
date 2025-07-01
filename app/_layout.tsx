@@ -69,6 +69,7 @@ export default function RootLayout() {
           options={{ 
             title: 'Edit Entry',
             headerBackTitle: 'Details',
+            presentation: 'modal',
           }} 
         />
         <Stack.Screen 

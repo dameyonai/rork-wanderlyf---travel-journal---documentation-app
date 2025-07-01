@@ -6,6 +6,7 @@ import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
 import { Card } from './Card';
 import { formatDate } from '@/utils/dateUtils';
+import { Edit } from 'react-native-vector-icons';
 
 interface JournalEntryCardProps {
   entry: JournalEntry;
@@ -22,21 +23,40 @@ export const JournalEntryCard: React.FC<JournalEntryCardProps> = ({
     router.push(`/journal/${entry.id}`);
   };
   
+  const handleEdit = (e: any) => {
+    e.stopPropagation(); // Prevent card press
+    router.push(`/journal/edit/${entry.id}`);
+  };
+  
   return (
     <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
       <Card style={styles.card}>
         {entry.imageUri ? (
-          <Image 
-            source={{ uri: entry.imageUri }} 
-            style={compact ? styles.compactImage : styles.image}
-            resizeMode="cover"
-          />
+          <View style={styles.imageContainer}>
+            <Image 
+              source={{ uri: entry.imageUri }} 
+              style={compact ? styles.compactImage : styles.image}
+              resizeMode="cover"
+            />
+            <TouchableOpacity 
+              style={styles.editOverlay}
+              onPress={handleEdit}
+            >
+              <Edit size={16} color="white" />
+            </TouchableOpacity>
+          </View>
         ) : (
           <View style={[
             compact ? styles.compactImagePlaceholder : styles.imagePlaceholder,
             styles.imagePlaceholderContent
           ]}>
             <Text style={styles.imagePlaceholderText}>No Image</Text>
+            <TouchableOpacity 
+              style={styles.editOverlay}
+              onPress={handleEdit}
+            >
+              <Edit size={16} color="white" />
+            </TouchableOpacity>
           </View>
         )}
         
@@ -137,5 +157,16 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.text.secondary,
     lineHeight: 20,
+  },
+  imageContainer: {
+    position: 'relative',
+  },
+  editOverlay: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    borderRadius: 16,
+    padding: 8,
   },
 });

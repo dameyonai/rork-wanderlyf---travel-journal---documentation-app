@@ -32,6 +32,10 @@ export default function JournalEntryDetailScreen() {
     );
   }
   
+  const handleEdit = () => {
+    router.push(`/journal/edit/${entry.id}`);
+  };
+  
   const handleDelete = () => {
     Alert.alert(
       "Delete Entry",
@@ -54,10 +58,6 @@ export default function JournalEntryDetailScreen() {
     );
   };
   
-  const handleEdit = () => {
-    router.push(`/journal/edit/${entry.id}`);
-  };
-  
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
       <ScrollView 
@@ -66,11 +66,13 @@ export default function JournalEntryDetailScreen() {
         showsVerticalScrollIndicator={false}
       >
         {entry.imageUri && (
-          <Image 
-            source={{ uri: entry.imageUri }} 
-            style={styles.image}
-            resizeMode="cover"
-          />
+          <View style={styles.imageContainer}>
+            <Image 
+              source={{ uri: entry.imageUri }} 
+              style={styles.image}
+              resizeMode="cover"
+            />
+          </View>
         )}
         
         <View style={styles.content}>
@@ -116,7 +118,7 @@ export default function JournalEntryDetailScreen() {
               disabled={isDeleting}
             >
               <Edit size={18} color={colors.text.primary} />
-              <Text style={styles.actionButtonText}>Edit</Text>
+              <Text style={styles.actionButtonText}>Edit Entry</Text>
             </TouchableOpacity>
             
             <TouchableOpacity 
@@ -216,6 +218,9 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: '600',
   },
+  imageContainer: {
+    position: 'relative',
+  },
   actionButtons: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -244,6 +249,7 @@ const styles = StyleSheet.create({
   actionButtonText: {
     fontWeight: '600',
     marginLeft: 8,
+    color: colors.text.primary,
   },
   deleteButtonText: {
     color: colors.error,
