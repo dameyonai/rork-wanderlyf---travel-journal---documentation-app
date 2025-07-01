@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Switch, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, Switch, TouchableOpacity, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
@@ -11,11 +11,30 @@ import { User, Bell, Moon, Database, Shield, HelpCircle, ChevronRight } from 'lu
 
 export default function SettingsScreen() {
   const { trips } = useTripStore();
-  const { name } = useProfileStore();
+  const { name, updateProfile } = useProfileStore();
   const router = useRouter();
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [tempName, setTempName] = useState(name);
   
   const handleEditProfile = () => {
     router.push('/settings/profile');
+  };
+
+  const handleNameEdit = () => {
+    if (isEditingName) {
+      // Save the name
+      updateProfile({ name: tempName.trim() || 'Traveler' });
+      setIsEditingName(false);
+    } else {
+      // Start editing
+      setTempName(name);
+      setIsEditingName(true);
+    }
+  };
+
+  const handleNameCancel = () => {
+    setTempName(name);
+    setIsEditingName(false);
   };
   
   return (
@@ -30,14 +49,40 @@ export default function SettingsScreen() {
             <User size={32} color={colors.text.primary} />
           </View>
           <View style={styles.profileInfo}>
-            <Text style={styles.profileName}>{name}</Text>
+            {isEditingName ? (
+              <View style={styles.nameEditContainer}>
+                <TextInput
+                  style={styles.nameInput}
+                  value={tempName}
+                  onChangeText={setTempName}
+                  placeholder="Enter your name"
+                  placeholderTextColor={colors.text.tertiary}
+                  autoFocus
+                  selectTextOnFocus
+                />
+                <View style={styles.nameEditButtons}>
+                  <TouchableOpacity onPress={handleNameCancel} style={styles.cancelButton}>
+                    <Text style={styles.cancelButtonText}>Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={handleNameEdit} style={styles.saveButton}>
+                    <Text style={styles.saveButtonText}>Save</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ) : (
+              <TouchableOpacity onPress={handleNameEdit}>
+                <Text style={styles.profileName}>{name}</Text>
+              </TouchableOpacity>
+            )}
             <Text style={styles.profileStats}>
               {trips.length} trips • {trips.reduce((total, trip) => total + trip.stats.daysOnTrip, 0)} days
             </Text>
           </View>
-          <TouchableOpacity style={styles.editButton} onPress={handleEditProfile}>
-            <Text style={styles.editButtonText}>Edit</Text>
-          </TouchableOpacity>
+          {!isEditingName && (
+            <TouchableOpacity style={styles.editButton} onPress={handleEditProfile}>
+              <Text style={styles.editButtonText}>Edit</Text>
+            </TouchableOpacity>
+          )}
         </View>
         
         <View style={styles.section}>
@@ -246,6 +291,49 @@ const styles = StyleSheet.create({
   logoutButton: {
     ...typography.body,
     color: colors.error,
+    fontWeight: '600',
+  },
+  nameEditContainer: {
+    width: '100%',
+  },
+  nameInput: {
+    backgroundColor: colors.background.input,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.border,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    color: colors.text.primary,
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 8,
+  },
+  nameEditButtons: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  cancelButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: colors.background.input,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  cancelButtonText: {
+    color: colors.text.secondary,
+    fontSize: 12,
+    fontWeight: '500',
+  },
+  saveButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: colors.accent.primary,
+    borderRadius: 16,
+  },
+  saveButtonText: {
+    color: 'white',
+    fontSize: 12,
     fontWeight: '600',
   },
 });
