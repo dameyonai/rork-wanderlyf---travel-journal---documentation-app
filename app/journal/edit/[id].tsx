@@ -19,6 +19,7 @@ import { Button } from '@/components/Button';
 import { useTripStore } from '@/store/tripStore';
 import { generateId } from '@/utils/idGenerator';
 import { Camera, MapPin, Calendar, Tag, X } from 'lucide-react-native';
+import type { JournalEntry, Location } from '@/types/trip';
 
 const categories = [
   "Today's Drive",
