@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Switch, TouchableOpacity, TextInput } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, Switch, TouchableOpacity, TextInput, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import * as ImagePicker from 'expo-image-picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
 import { TabBar } from '@/components/TabBar';
 import { useTripStore } from '@/store/tripStore';
 import { useProfileStore } from '@/store/profileStore';
 import { useRouter } from 'expo-router';
-import { User, Bell, Moon, Database, Shield, HelpCircle, ChevronRight } from 'lucide-react-native';
+import { User, Bell, Moon, Database, Shield, HelpCircle, ChevronRight, Camera } from 'lucide-react-native';
 
 export default function SettingsScreen() {
   const { trips } = useTripStore();
@@ -15,20 +17,52 @@ export default function SettingsScreen() {
   const router = useRouter();
   const [isEditingName, setIsEditingName] = useState(false);
   const [tempName, setTempName] = useState(name);
+  const [photoUri, setPhotoUri] = useState<string>();
   
+  useEffect(() => {
+    (async () => {
+      const savedName = await AsyncStorage.getItem('profile:name');
+      const savedPhotoUri = await AsyncStorage.getItem('profile:photoUri');
+      if (savedName) setTempName(savedName);
+      if (savedPhotoUri) setPhotoUri(savedPhotoUri);
+    })();
+  }, []);
+
   const handleEditProfile = () => {
     router.push('/settings/profile');
   };
 
-  const handleNameEdit = () => {
+  const handleNameEdit = async () => {
     if (isEditingName) {
       // Save the name
-      updateProfile({ name: tempName.trim() || 'Traveler' });
+      const finalName = tempName.trim() || 'Traveler';
+      updateProfile({ name: finalName });
+      await AsyncStorage.setItem('profile:name', finalName);
       setIsEditingName(false);
     } else {
       // Start editing
       setTempName(name);
       setIsEditingName(true);
+    }
+  };
+
+  const handlePhotoSelect = async () => {
+    try {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') return;
+      
+      const result = await ImagePicker.launchImageLibraryAsync({
+        quality: 0.7,
+        allowsEditing: true,
+        aspect: [1, 1],
+      });
+      
+      if (!result.canceled) {
+        setPhotoUri(result.assets[0].uri);
+        await AsyncStorage.setItem('profile:photoUri', result.assets[0].uri);
+      }
+    } catch (error) {
+      console.error('Error selecting photo:', error);
     }
   };
 
@@ -45,9 +79,16 @@ export default function SettingsScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.profileSection}>
-          <View style={styles.profileAvatar}>
-            <User size={32} color={colors.text.primary} />
-          </View>
+          <TouchableOpacity style={styles.profileAvatar} onPress={handlePhotoSelect}>
+            {photoUri ? (
+              <Image source={{ uri: photoUri }} style={styles.avatarImage} />
+            ) : (
+              <User size={32} color={colors.text.primary} />
+            )}
+            <View style={styles.cameraOverlay}>
+              <Camera size={16} color="white" />
+            </View>
+          </TouchableOpacity>
           <View style={styles.profileInfo}>
             {isEditingName ? (
               <View style={styles.nameEditContainer}>
@@ -335,5 +376,23 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 12,
     fontWeight: '600',
+  },
+  avatarImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+  },
+  cameraOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    backgroundColor: colors.accent.primary,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: colors.background.primary,
   },
 });
