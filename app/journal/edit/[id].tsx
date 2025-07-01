@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { 
   View, 
   Text, 
-  StyleSheet, 
   TextInput, 
+  StyleSheet, 
   ScrollView, 
   TouchableOpacity,
   Image,
@@ -17,7 +17,8 @@ import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
 import { Button } from '@/components/Button';
 import { useTripStore } from '@/store/tripStore';
-import { Camera, MapPin, Tag, X } from 'lucide-react-native';
+import { generateId } from '@/utils/idGenerator';
+import { Camera, MapPin, Calendar, Tag, X } from 'lucide-react-native';
 
 const categories = [
   "Today's Drive",
@@ -121,7 +122,7 @@ export default function EditJournalEntryScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['bottom']}>
       <ScrollView 
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
@@ -136,7 +137,7 @@ export default function EditJournalEntryScreen() {
                 style={styles.removeImageButton}
                 onPress={() => setImageUri(undefined)}
               >
-                <Text style={{ color: 'white', fontSize: 20 }}>×</Text>
+                <X size={20} color="white" />
               </TouchableOpacity>
             </View>
           ) : (
@@ -144,6 +145,7 @@ export default function EditJournalEntryScreen() {
               style={styles.imagePicker}
               onPress={pickImage}
             >
+              <Camera size={32} color={colors.text.secondary} />
               <Text style={styles.imagePickerText}>+ Change Photo</Text>
             </TouchableOpacity>
           )}
@@ -166,7 +168,7 @@ export default function EditJournalEntryScreen() {
             style={styles.inputWithIcon}
             onPress={() => router.push('/map/picker')}
           >
-            <Text style={styles.inputIcon}>📍</Text>
+            <MapPin size={18} color={colors.text.secondary} style={styles.inputIcon} />
             <Text style={[
               styles.inputText,
               !location && styles.placeholderText
@@ -214,12 +216,11 @@ export default function EditJournalEntryScreen() {
           />
         </View>
         
-        <TouchableOpacity 
-          style={styles.submitButton}
+        <Button 
+          title="Save Changes" 
           onPress={handleSave}
-        >
-          <Text style={styles.submitButtonText}>Save Changes</Text>
-        </TouchableOpacity>
+          style={styles.submitButton}
+        />
       </ScrollView>
     </SafeAreaView>
   );
@@ -253,6 +254,7 @@ const styles = StyleSheet.create({
   imagePickerText: {
     color: colors.text.secondary,
     fontSize: 18,
+    marginTop: 8,
   },
   imagePreviewContainer: {
     position: 'relative',
@@ -279,9 +281,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   label: {
-    color: colors.text.secondary,
-    fontSize: 14,
-    fontWeight: '500',
+    ...typography.caption,
     marginBottom: 8,
   },
   input: {
@@ -306,12 +306,17 @@ const styles = StyleSheet.create({
   },
   inputIcon: {
     marginRight: 12,
-    fontSize: 16,
   },
   inputText: {
     flex: 1,
     color: colors.text.primary,
     fontSize: 16,
+    padding: 0,
+    ...Platform.select({
+      web: {
+        outlineStyle: 'none',
+      },
+    }),
   },
   placeholderText: {
     color: colors.text.tertiary,
@@ -360,16 +365,6 @@ const styles = StyleSheet.create({
     }),
   },
   submitButton: {
-    backgroundColor: colors.accent.primary,
-    borderRadius: 25,
-    paddingVertical: 14,
-    paddingHorizontal: 20,
-    alignItems: 'center',
     marginTop: 16,
-  },
-  submitButtonText: {
-    color: 'white',
-    fontWeight: '600',
-    fontSize: 16,
   },
 });
