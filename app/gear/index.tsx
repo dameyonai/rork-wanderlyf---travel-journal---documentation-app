@@ -9,6 +9,7 @@ import { TabBar } from '@/components/TabBar';
 import { useGearStore } from '@/store/gearStore';
 import { GearItemCard } from '@/components/GearItemCard';
 import { Tent, Shirt, Smartphone, Utensils, Heart } from 'lucide-react-native';
+import { Plus } from 'lucide-react-native';
 
 export default function GearScreen() {
   const router = useRouter();
@@ -31,6 +32,10 @@ export default function GearScreen() {
   
   const handleCategoryPress = (categoryId: string) => {
     router.push(`/gear/${categoryId}`);
+  };
+  
+  const handleAddNewItem = () => {
+    router.push('/gear/new');
   };
   
   const renderCategory = ({ item }: { item: any }) => {
@@ -60,6 +65,17 @@ export default function GearScreen() {
   
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
+      <View style={styles.header}>
+        <Text style={styles.sectionTitle}>Gear</Text>
+        <TouchableOpacity 
+          style={styles.addButton}
+          onPress={handleAddNewItem}
+        >
+          <Plus size={18} color="white" />
+          <Text style={styles.addButtonText}>Add Item</Text>
+        </TouchableOpacity>
+      </View>
+      
       <View style={styles.content}>
         <Text style={styles.sectionTitle}>Categories</Text>
         
@@ -118,6 +134,26 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: 20,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  addButton: {
+    backgroundColor: colors.accent.primary,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    gap: 6,
+  },
+  addButtonText: {
+    color: 'white',
+    fontWeight: '600',
+    fontSize: 14,
   },
   sectionTitle: {
     ...typography.heading,

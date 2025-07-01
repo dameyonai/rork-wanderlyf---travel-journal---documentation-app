@@ -94,6 +94,14 @@ export default function RootLayout() {
           }} 
         />
         <Stack.Screen 
+          name="gear/new" 
+          options={{ 
+            title: 'Add Gear Item',
+            headerBackTitle: 'Gear',
+            presentation: 'modal',
+          }} 
+        />
+        <Stack.Screen 
           name="settings/index" 
           options={{ 
             title: 'Settings',
