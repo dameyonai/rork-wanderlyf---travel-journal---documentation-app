@@ -48,20 +48,25 @@ export const useTripStore = create<TripState>()(
       },
       
       updateTrip: (tripId: string, tripData: Partial<Trip>) => {
-        set(state => ({
-          trips: state.trips.map(trip => 
+        set(state => {
+          const updatedTrips = state.trips.map(trip => 
             trip.id === tripId ? { ...trip, ...tripData } : trip
-          ),
-          activeTrip: state.activeTrip?.id === tripId 
-            ? { ...state.activeTrip, ...tripData } 
-            : state.activeTrip,
-        }));
+          );
+          
+          return {
+            trips: updatedTrips,
+            activeTrip: state.activeTrip?.id === tripId 
+              ? { ...state.activeTrip, ...tripData } 
+              : state.activeTrip,
+          };
+        });
       },
       
       deleteTrip: (tripId: string) => {
         set(state => ({
           trips: state.trips.filter(trip => trip.id !== tripId),
           activeTrip: state.activeTrip?.id === tripId ? null : state.activeTrip,
+          journalEntries: state.journalEntries.filter(entry => entry.tripId !== tripId),
         }));
       },
       
