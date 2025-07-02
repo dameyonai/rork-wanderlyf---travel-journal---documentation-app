@@ -16,11 +16,11 @@ import * as ImagePicker from 'expo-image-picker';
 import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
 import { Button } from '@/components/Button';
+import { DatePicker } from '@/components/DatePicker';
 import { useTripStore } from '@/store/tripStore';
 import { generateId } from '@/utils/idGenerator';
 import { calculateDaysBetween } from '@/utils/dateUtils';
-import { Camera, Calendar, X } from 'lucide-react-native';
-import { DatePicker } from '@/components/DatePicker';
+import { Camera, X } from 'lucide-react-native';
 
 export default function NewTripScreen() {
   const router = useRouter();
