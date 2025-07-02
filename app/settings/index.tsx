@@ -9,7 +9,7 @@ import { TabBar } from '@/components/TabBar';
 import { useTripStore } from '@/store/tripStore';
 import { useProfileStore } from '@/store/profileStore';
 import { useRouter } from 'expo-router';
-import { User, Bell, Moon, Database, Shield, HelpCircle, ChevronRight, Camera } from 'lucide-react-native';
+import { User, Bell, Moon, Database, Shield, HelpCircle, ChevronRight, Camera, Plus } from 'lucide-react-native';
 
 export default function SettingsScreen() {
   const { trips } = useTripStore();
@@ -46,29 +46,13 @@ export default function SettingsScreen() {
     }
   };
 
-  const handlePhotoSelect = async () => {
-    try {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (status !== 'granted') return;
-      
-      const result = await ImagePicker.launchImageLibraryAsync({
-        quality: 0.7,
-        allowsEditing: true,
-        aspect: [1, 1],
-      });
-      
-      if (!result.canceled) {
-        setPhotoUri(result.assets[0].uri);
-        await AsyncStorage.setItem('profile:photoUri', result.assets[0].uri);
-      }
-    } catch (error) {
-      console.error('Error selecting photo:', error);
-    }
-  };
-
   const handleNameCancel = () => {
     setTempName(name);
     setIsEditingName(false);
+  };
+
+  const handleNewTrip = () => {
+    router.push('/trips/new');
   };
   
   return (
@@ -143,6 +127,17 @@ export default function SettingsScreen() {
             </TouchableOpacity>
           )}
         </View>
+
+        <TouchableOpacity style={styles.newTripSection} onPress={handleNewTrip}>
+          <View style={styles.newTripIcon}>
+            <Plus size={24} color={colors.text.primary} />
+          </View>
+          <View style={styles.newTripInfo}>
+            <Text style={styles.newTripTitle}>Create New Trip</Text>
+            <Text style={styles.newTripSubtitle}>Start documenting a new adventure</Text>
+          </View>
+          <ChevronRight size={20} color={colors.text.tertiary} />
+        </TouchableOpacity>
         
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Preferences</Text>
@@ -262,7 +257,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.secondary,
     borderRadius: 16,
     padding: 20,
-    marginBottom: 24,
+    marginBottom: 16,
     borderWidth: 1,
     borderColor: colors.border,
   },
@@ -273,6 +268,7 @@ const styles = StyleSheet.create({
     backgroundColor: `${colors.accent.primary}20`,
     justifyContent: 'center',
     alignItems: 'center',
+    position: 'relative',
   },
   profileInfo: {
     flex: 1,
@@ -298,6 +294,37 @@ const styles = StyleSheet.create({
   editButtonText: {
     ...typography.caption,
     color: colors.text.primary,
+  },
+  newTripSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.background.secondary,
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 24,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  newTripIcon: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: `${colors.accent.primary}20`,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  newTripInfo: {
+    flex: 1,
+    marginLeft: 16,
+  },
+  newTripTitle: {
+    ...typography.heading,
+    fontSize: 20,
+    marginBottom: 4,
+  },
+  newTripSubtitle: {
+    ...typography.caption,
+    color: colors.text.secondary,
   },
   section: {
     marginBottom: 24,
