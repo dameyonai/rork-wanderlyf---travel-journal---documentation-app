@@ -15,7 +15,7 @@ interface ProfileState {
 export const useProfileStore = create<ProfileState>()(
   persist(
     (set) => ({
-      name: 'Traveler',
+      name: 'SHDWBLK TRVLR',
       email: undefined,
       bio: undefined,
       
@@ -28,7 +28,7 @@ export const useProfileStore = create<ProfileState>()(
       
       resetProfile: () => {
         set({
-          name: 'Traveler',
+          name: 'SHDWBLK TRVLR',
           email: undefined,
           bio: undefined,
         });

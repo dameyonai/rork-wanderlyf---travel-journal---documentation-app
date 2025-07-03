@@ -10,6 +10,7 @@ import { useTripStore } from '@/store/tripStore';
 import { useProfileStore } from '@/store/profileStore';
 import { useRouter } from 'expo-router';
 import { User, Bell, Moon, Database, Shield, HelpCircle, ChevronRight, Camera, Plus } from 'lucide-react-native';
+import { calculateDaysBetween } from '@/utils/dateUtils';
 
 export default function SettingsScreen() {
   const { trips } = useTripStore();
@@ -28,6 +29,13 @@ export default function SettingsScreen() {
     })();
   }, []);
 
+  // Calculate dynamic trip stats
+  const tripCount = trips.length;
+  const totalDays = trips.reduce((sum, trip) => {
+    const duration = calculateDaysBetween(trip.startDate, trip.endDate);
+    return sum + duration;
+  }, 0);
+
   const handleEditProfile = () => {
     router.push('/settings/profile');
   };
@@ -35,7 +43,7 @@ export default function SettingsScreen() {
   const handleNameEdit = async () => {
     if (isEditingName) {
       // Save the name
-      const finalName = tempName.trim() || 'Traveler';
+      const finalName = tempName.trim() || 'SHDWBLK TRVLR';
       updateProfile({ name: finalName });
       await AsyncStorage.setItem('profile:name', finalName);
       setIsEditingName(false);
@@ -114,11 +122,11 @@ export default function SettingsScreen() {
               </View>
             ) : (
               <TouchableOpacity onPress={handleNameEdit}>
-                <Text style={styles.profileName}>{name}</Text>
+                <Text style={styles.profileName}>{name === 'Traveler' ? 'SHDWBLK TRVLR' : name}</Text>
               </TouchableOpacity>
             )}
             <Text style={styles.profileStats}>
-              {trips.length} trips • {trips.reduce((total, trip) => total + trip.stats.daysOnTrip, 0)} days
+              {tripCount} {tripCount === 1 ? 'trip' : 'trips'} • {totalDays} days
             </Text>
           </View>
           {!isEditingName && (
