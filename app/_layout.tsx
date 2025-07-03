@@ -95,6 +95,22 @@ export default function RootLayout() {
           }} 
         />
         <Stack.Screen 
+          name="gallery/index" 
+          options={{ 
+            title: 'Gallery',
+            headerBackTitle: 'Home',
+            headerShown: false,
+          }} 
+        />
+        <Stack.Screen 
+          name="gallery/edit/[id]" 
+          options={{ 
+            title: 'Edit Photo',
+            headerBackTitle: 'Gallery',
+            presentation: 'modal',
+          }} 
+        />
+        <Stack.Screen 
           name="map/index" 
           options={{ 
             title: 'Trip Map',

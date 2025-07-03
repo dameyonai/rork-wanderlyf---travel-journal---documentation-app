@@ -9,7 +9,7 @@ import { TabBar } from '@/components/TabBar';
 import { useTripStore } from '@/store/tripStore';
 import { useProfileStore } from '@/store/profileStore';
 import { useRouter } from 'expo-router';
-import { User, Bell, Moon, Database, Shield, HelpCircle, ChevronRight, Camera, Plus, Car } from 'lucide-react-native';
+import { User, Bell, Moon, Database, Shield, HelpCircle, ChevronRight, Camera, Plus, Car, Image as ImageIcon } from 'lucide-react-native';
 import { calculateDaysBetween } from '@/utils/dateUtils';
 
 export default function SettingsScreen() {
@@ -65,6 +65,10 @@ export default function SettingsScreen() {
 
   const handleVehicle = () => {
     router.push('/vehicle');
+  };
+
+  const handleGallery = () => {
+    router.push('/gallery');
   };
   
   return (
@@ -158,6 +162,17 @@ export default function SettingsScreen() {
           <View style={styles.newTripInfo}>
             <Text style={styles.newTripTitle}>My Vehicle</Text>
             <Text style={styles.newTripSubtitle}>Manage photos and modifications</Text>
+          </View>
+          <ChevronRight size={20} color={colors.text.tertiary} />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.newTripSection} onPress={handleGallery}>
+          <View style={styles.newTripIcon}>
+            <ImageIcon size={24} color={colors.text.primary} />
+          </View>
+          <View style={styles.newTripInfo}>
+            <Text style={styles.newTripTitle}>Photo Gallery</Text>
+            <Text style={styles.newTripSubtitle}>Browse and edit your travel photos</Text>
           </View>
           <ChevronRight size={20} color={colors.text.tertiary} />
         </TouchableOpacity>

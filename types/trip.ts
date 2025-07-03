@@ -26,6 +26,13 @@ export interface Photo {
   date: string;
 }
 
+export interface GalleryPhoto {
+  id: string;
+  caption: string;
+  description: string;
+  imageUri: string;
+}
+
 export interface TripStats {
   distanceTraveled: number;
   placesVisited: number;
