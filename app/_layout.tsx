@@ -73,6 +73,28 @@ export default function RootLayout() {
           }} 
         />
         <Stack.Screen 
+          name="photos/index" 
+          options={{ 
+            title: 'Photos',
+            headerBackTitle: 'Home',
+          }} 
+        />
+        <Stack.Screen 
+          name="photos/[id]" 
+          options={{ 
+            title: 'Photo',
+            headerBackTitle: 'Photos',
+          }} 
+        />
+        <Stack.Screen 
+          name="photos/new" 
+          options={{ 
+            title: 'Add Photo',
+            headerBackTitle: 'Photos',
+            presentation: 'modal',
+          }} 
+        />
+        <Stack.Screen 
           name="map/index" 
           options={{ 
             title: 'Trip Map',

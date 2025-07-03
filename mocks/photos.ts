@@ -1,0 +1,148 @@
+import { Photo } from '@/types/trip';
+
+export const mockPhotos: Photo[] = [
+  {
+    id: 'photo-1',
+    tripId: 'trip-1',
+    imageUri: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400',
+    caption: 'Amazing sunset over the mountains',
+    location: {
+      name: 'Darwin Sunset',
+      latitude: -12.4634,
+      longitude: 130.8456,
+    },
+    date: '2024-12-15T18:30:00Z',
+  },
+  {
+    id: 'photo-2',
+    tripId: 'trip-1',
+    imageUri: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400',
+    caption: 'Beautiful waterfalls and swimming holes',
+    location: {
+      name: 'Litchfield NP',
+      latitude: -13.1500,
+      longitude: 130.7000,
+    },
+    date: '2024-12-16T14:20:00Z',
+  },
+  {
+    id: 'photo-3',
+    tripId: 'trip-1',
+    imageUri: 'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=400',
+    caption: 'Crocodile spotting adventure',
+    location: {
+      name: 'Kakadu Crocs',
+      latitude: -12.8000,
+      longitude: 132.8000,
+    },
+    date: '2024-12-17T10:15:00Z',
+  },
+  {
+    id: 'photo-4',
+    tripId: 'trip-1',
+    imageUri: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400',
+    caption: 'Stunning gorge views',
+    location: {
+      name: 'Katherine Gorge',
+      latitude: -14.2500,
+      longitude: 132.4500,
+    },
+    date: '2024-12-18T16:45:00Z',
+  },
+  {
+    id: 'photo-5',
+    tripId: 'trip-1',
+    imageUri: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400',
+    caption: 'Relaxing hot springs',
+    location: {
+      name: 'Mataranka',
+      latitude: -14.9167,
+      longitude: 133.0667,
+    },
+    date: '2024-12-19T12:30:00Z',
+  },
+  {
+    id: 'photo-6',
+    tripId: 'trip-1',
+    imageUri: 'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=400',
+    caption: 'Historic outback pub',
+    location: {
+      name: 'Daly Waters Pub',
+      latitude: -16.2500,
+      longitude: 133.3833,
+    },
+    date: '2024-12-20T19:00:00Z',
+  },
+  {
+    id: 'photo-7',
+    tripId: 'trip-1',
+    imageUri: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400',
+    caption: 'Incredible rock formations',
+    location: {
+      name: "Devil's Marbles",
+      latitude: -20.5833,
+      longitude: 134.2667,
+    },
+    date: '2024-12-21T08:45:00Z',
+  },
+  {
+    id: 'photo-8',
+    tripId: 'trip-1',
+    imageUri: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400',
+    caption: 'Heart of the red centre',
+    location: {
+      name: 'Alice Springs',
+      latitude: -23.6980,
+      longitude: 133.8807,
+    },
+    date: '2024-12-22T15:20:00Z',
+  },
+  {
+    id: 'photo-9',
+    tripId: 'trip-1',
+    imageUri: 'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=400',
+    caption: 'Majestic mountain ranges',
+    location: {
+      name: 'West Macs',
+      latitude: -23.7000,
+      longitude: 133.0000,
+    },
+    date: '2024-12-23T11:10:00Z',
+  },
+  {
+    id: 'photo-10',
+    tripId: 'trip-1',
+    imageUri: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400',
+    caption: 'Breathtaking canyon views',
+    location: {
+      name: 'Kings Canyon',
+      latitude: -24.2667,
+      longitude: 131.5167,
+    },
+    date: '2024-12-24T07:30:00Z',
+  },
+  {
+    id: 'photo-11',
+    tripId: 'trip-1',
+    imageUri: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400',
+    caption: 'Magical sunrise at the rock',
+    location: {
+      name: 'Uluru Sunrise',
+      latitude: -25.3444,
+      longitude: 131.0369,
+    },
+    date: '2024-12-25T06:00:00Z',
+  },
+  {
+    id: 'photo-12',
+    tripId: 'trip-1',
+    imageUri: 'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=400',
+    caption: 'Ancient domed rock formations',
+    location: {
+      name: 'The Olgas',
+      latitude: -25.3000,
+      longitude: 130.7333,
+    },
+    date: '2024-12-26T17:15:00Z',
+  },
+];

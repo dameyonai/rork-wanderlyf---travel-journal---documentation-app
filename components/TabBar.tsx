@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native
 import { useRouter, usePathname } from 'expo-router';
 import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
-import { Home, BookOpen, Map, Backpack, Settings } from 'lucide-react-native';
+import { Home, BookOpen, Map, Camera, Settings } from 'lucide-react-native';
 
 export const TabBar: React.FC = () => {
   const router = useRouter();
@@ -21,14 +21,14 @@ export const TabBar: React.FC = () => {
       icon: (active: boolean) => <BookOpen size={20} color={active ? colors.accent.primary : colors.text.tertiary} />,
     },
     {
+      name: 'Photos',
+      path: '/photos',
+      icon: (active: boolean) => <Camera size={20} color={active ? colors.accent.primary : colors.text.tertiary} />,
+    },
+    {
       name: 'Map',
       path: '/map',
       icon: (active: boolean) => <Map size={20} color={active ? colors.accent.primary : colors.text.tertiary} />,
-    },
-    {
-      name: 'Gear',
-      path: '/gear',
-      icon: (active: boolean) => <Backpack size={20} color={active ? colors.accent.primary : colors.text.tertiary} />,
     },
     {
       name: 'Settings',

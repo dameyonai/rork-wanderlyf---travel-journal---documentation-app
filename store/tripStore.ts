@@ -1,14 +1,16 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Trip, JournalEntry, Location } from '@/types/trip';
+import { Trip, JournalEntry, Location, Photo } from '@/types/trip';
 import { mockTrips } from '@/mocks/trips';
 import { mockJournalEntries } from '@/mocks/journal-entries';
+import { mockPhotos } from '@/mocks/photos';
 
 interface TripState {
   trips: Trip[];
   activeTrip: Trip | null;
   journalEntries: JournalEntry[];
+  photos: Photo[];
   
   // Actions
   setActiveTrip: (tripId: string) => void;
@@ -20,7 +22,13 @@ interface TripState {
   updateJournalEntry: (entryId: string, entryData: Partial<JournalEntry>) => void;
   deleteJournalEntry: (entryId: string) => void;
   
+  addPhoto: (photo: Photo) => void;
+  updatePhoto: (photoId: string, photoData: Partial<Photo>) => void;
+  deletePhoto: (photoId: string) => void;
+  
   getEntriesForTrip: (tripId: string) => JournalEntry[];
+  getPhotosForTrip: (tripId: string) => Photo[];
+  getPhotoById: (photoId: string) => Photo | undefined;
   getActiveTrip: () => Trip | null;
 }
 
@@ -30,6 +38,7 @@ export const useTripStore = create<TripState>()(
       trips: mockTrips,
       activeTrip: mockTrips.find(trip => trip.isActive) || null,
       journalEntries: mockJournalEntries,
+      photos: mockPhotos,
       
       setActiveTrip: (tripId: string) => {
         set(state => ({
@@ -67,6 +76,7 @@ export const useTripStore = create<TripState>()(
           trips: state.trips.filter(trip => trip.id !== tripId),
           activeTrip: state.activeTrip?.id === tripId ? null : state.activeTrip,
           journalEntries: state.journalEntries.filter(entry => entry.tripId !== tripId),
+          photos: state.photos.filter(photo => photo.tripId !== tripId),
         }));
       },
       
@@ -90,8 +100,36 @@ export const useTripStore = create<TripState>()(
         }));
       },
       
+      addPhoto: (photo: Photo) => {
+        set(state => ({
+          photos: [...state.photos, photo],
+        }));
+      },
+      
+      updatePhoto: (photoId: string, photoData: Partial<Photo>) => {
+        set(state => ({
+          photos: state.photos.map(photo => 
+            photo.id === photoId ? { ...photo, ...photoData } : photo
+          ),
+        }));
+      },
+      
+      deletePhoto: (photoId: string) => {
+        set(state => ({
+          photos: state.photos.filter(photo => photo.id !== photoId),
+        }));
+      },
+      
       getEntriesForTrip: (tripId: string) => {
         return get().journalEntries.filter(entry => entry.tripId === tripId);
+      },
+      
+      getPhotosForTrip: (tripId: string) => {
+        return get().photos.filter(photo => photo.tripId === tripId);
+      },
+      
+      getPhotoById: (photoId: string) => {
+        return get().photos.find(photo => photo.id === photoId);
       },
       
       getActiveTrip: () => {
