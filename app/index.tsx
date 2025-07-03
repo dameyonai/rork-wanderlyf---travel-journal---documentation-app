@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '@/constants/colors';
@@ -102,36 +102,47 @@ export default function HomeScreen() {
             </View>
             
             <View style={styles.tripCard}>
-              <Text style={styles.tripTitle}>{activeTrip.title}</Text>
-              <Text style={styles.tripDates}>
-                {formatDateRange(activeTrip.startDate, activeTrip.endDate)}
-              </Text>
-              <Text style={styles.tripDescription}>{activeTrip.description}</Text>
-              <Text style={styles.subtitle}>Project Wayfarer</Text>
-
-              {stats?.type === 'countdown' ? (
-                <View style={styles.countdownContainer}>
-                  <Text style={styles.countdownTitle}>Trip starts in</Text>
-                  <Text style={styles.countdownDays}>{stats.daysUntilStart}</Text>
-                  <Text style={styles.countdownLabel}>
-                    {stats.daysUntilStart === 1 ? 'day' : 'days'}
-                  </Text>
-                  <Text style={styles.countdownSubtext}>
-                    {stats.totalDays} day trip planned
-                  </Text>
-                </View>
-              ) : (
-                <View style={styles.statsGrid}>
-                  <StatCard value={stats?.distanceTraveled || 0} label="Kilometers" />
-                  <StatCard value={stats?.placesVisited || 0} label="Places Visited" />
-                  <StatCard value={stats?.photosCount || 0} label="Photos" />
-                  <StatCard value={
-                    stats?.isCompleted ? stats.totalDays : `${stats?.daysElapsed || 0}/${stats?.totalDays || 0}`
-                  } label={
-                    stats?.isCompleted ? 'Total Days' : 'Days Progress'
-                  } />
-                </View>
+              {/* Add vehicle image if it exists */}
+              {activeTrip.coverImageUri && (
+                <Image 
+                  source={{ uri: activeTrip.coverImageUri }} 
+                  style={styles.tripImage}
+                  resizeMode="cover"
+                />
               )}
+              
+              <View style={styles.tripContent}>
+                <Text style={styles.tripTitle}>{activeTrip.title}</Text>
+                <Text style={styles.tripDates}>
+                  {formatDateRange(activeTrip.startDate, activeTrip.endDate)}
+                </Text>
+                <Text style={styles.tripDescription}>{activeTrip.description}</Text>
+                <Text style={styles.subtitle}>Project Wayfarer</Text>
+
+                {stats?.type === 'countdown' ? (
+                  <View style={styles.countdownContainer}>
+                    <Text style={styles.countdownTitle}>Trip starts in</Text>
+                    <Text style={styles.countdownDays}>{stats.daysUntilStart}</Text>
+                    <Text style={styles.countdownLabel}>
+                      {stats.daysUntilStart === 1 ? 'day' : 'days'}
+                    </Text>
+                    <Text style={styles.countdownSubtext}>
+                      {stats.totalDays} day trip planned
+                    </Text>
+                  </View>
+                ) : (
+                  <View style={styles.statsGrid}>
+                    <StatCard value={stats?.distanceTraveled || 0} label="Kilometers" />
+                    <StatCard value={stats?.placesVisited || 0} label="Places Visited" />
+                    <StatCard value={stats?.photosCount || 0} label="Photos" />
+                    <StatCard value={
+                      stats?.isCompleted ? stats.totalDays : `${stats?.daysElapsed || 0}/${stats?.totalDays || 0}`
+                    } label={
+                      stats?.isCompleted ? 'Total Days' : 'Days Progress'
+                    } />
+                  </View>
+                )}
+              </View>
             </View>
             
             <TripHeader trip={activeTrip} />
@@ -203,10 +214,17 @@ const styles = StyleSheet.create({
   tripCard: {
     backgroundColor: colors.background.card,
     borderRadius: 16,
-    padding: 20,
     borderWidth: 1,
     borderColor: colors.border,
     marginBottom: 16,
+    overflow: 'hidden',
+  },
+  tripImage: {
+    width: '100%',
+    height: 200,
+  },
+  tripContent: {
+    padding: 20,
   },
   tripTitle: {
     fontSize: 22,
@@ -237,6 +255,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     borderColor: `${colors.accent.primary}30`,
+    marginTop: 16,
   },
   countdownTitle: {
     fontSize: 16,
@@ -263,6 +282,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 12,
+    marginTop: 16,
   },
   statCard: {
     flex: 1,
