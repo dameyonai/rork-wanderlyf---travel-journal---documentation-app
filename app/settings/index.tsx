@@ -9,7 +9,7 @@ import { TabBar } from '@/components/TabBar';
 import { useTripStore } from '@/store/tripStore';
 import { useProfileStore } from '@/store/profileStore';
 import { useRouter } from 'expo-router';
-import { User, Bell, Moon, Database, Shield, HelpCircle, ChevronRight, Camera, Plus } from 'lucide-react-native';
+import { User, Bell, Moon, Database, Shield, HelpCircle, ChevronRight, Camera, Plus, Car } from 'lucide-react-native';
 import { calculateDaysBetween } from '@/utils/dateUtils';
 
 export default function SettingsScreen() {
@@ -61,6 +61,10 @@ export default function SettingsScreen() {
 
   const handleNewTrip = () => {
     router.push('/trips/new');
+  };
+
+  const handleVehicle = () => {
+    router.push('/vehicle');
   };
   
   return (
@@ -143,6 +147,17 @@ export default function SettingsScreen() {
           <View style={styles.newTripInfo}>
             <Text style={styles.newTripTitle}>Create New Trip</Text>
             <Text style={styles.newTripSubtitle}>Start documenting a new adventure</Text>
+          </View>
+          <ChevronRight size={20} color={colors.text.tertiary} />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.newTripSection} onPress={handleVehicle}>
+          <View style={styles.newTripIcon}>
+            <Car size={24} color={colors.text.primary} />
+          </View>
+          <View style={styles.newTripInfo}>
+            <Text style={styles.newTripTitle}>My Vehicle</Text>
+            <Text style={styles.newTripSubtitle}>Manage photos and modifications</Text>
           </View>
           <ChevronRight size={20} color={colors.text.tertiary} />
         </TouchableOpacity>
@@ -309,7 +324,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.secondary,
     borderRadius: 16,
     padding: 20,
-    marginBottom: 24,
+    marginBottom: 16,
     borderWidth: 1,
     borderColor: colors.border,
   },

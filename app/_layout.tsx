@@ -124,6 +124,21 @@ export default function RootLayout() {
             presentation: 'modal',
           }} 
         />
+        <Stack.Screen 
+          name="vehicle/index" 
+          options={{ 
+            title: 'My Vehicle',
+            headerBackTitle: 'Settings',
+          }} 
+        />
+        <Stack.Screen 
+          name="vehicle/new-mod" 
+          options={{ 
+            title: 'Add Modification',
+            headerBackTitle: 'Vehicle',
+            presentation: 'modal',
+          }} 
+        />
       </Stack>
     </View>
   );
