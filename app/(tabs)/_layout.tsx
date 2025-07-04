@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { colors } from '@/constants/colors';
-import { Feather } from '@expo/vector-icons';
+import { Home, BookOpen, Image, CheckSquare, Map, Settings } from 'lucide-react-native';
 import { View, Text } from 'react-native';
 
 const TabIcon = ({ focused, icon, name }: { focused: boolean; icon: React.ReactNode; name: string }) => (
@@ -34,42 +34,42 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ focused }) => <TabIcon focused={focused} icon={<Feather name="home" size={24} color={focused ? colors.primary : colors.textMuted} />} name="Home" />,
+          tabBarIcon: ({ focused }) => <TabIcon focused={focused} icon={<Home size={24} color={focused ? colors.primary : colors.textMuted} />} name="Home" />,
         }}
       />
       <Tabs.Screen
         name="journal"
         options={{
           title: 'Journal',
-          tabBarIcon: ({ focused }) => <TabIcon focused={focused} icon={<Feather name="book-open" size={24} color={focused ? colors.primary : colors.textMuted} />} name="Journal" />,
+          tabBarIcon: ({ focused }) => <TabIcon focused={focused} icon={<BookOpen size={24} color={focused ? colors.primary : colors.textMuted} />} name="Journal" />,
         }}
       />
       <Tabs.Screen
         name="gallery"
         options={{
           title: 'Photos',
-          tabBarIcon: ({ focused }) => <TabIcon focused={focused} icon={<Feather name="image" size={24} color={focused ? colors.primary : colors.textMuted} />} name="Photos" />,
+          tabBarIcon: ({ focused }) => <TabIcon focused={focused} icon={<Image size={24} color={focused ? colors.primary : colors.textMuted} />} name="Photos" />,
         }}
       />
       <Tabs.Screen
         name="checklist"
         options={{
           title: 'Checklist',
-          tabBarIcon: ({ focused }) => <TabIcon focused={focused} icon={<Feather name="check-square" size={24} color={focused ? colors.primary : colors.textMuted} />} name="Checklist" />,
+          tabBarIcon: ({ focused }) => <TabIcon focused={focused} icon={<CheckSquare size={24} color={focused ? colors.primary : colors.textMuted} />} name="Checklist" />,
         }}
       />
       <Tabs.Screen
         name="map"
         options={{
           title: 'Map',
-          tabBarIcon: ({ focused }) => <TabIcon focused={focused} icon={<Feather name="map" size={24} color={focused ? colors.primary : colors.textMuted} />} name="Map" />,
+          tabBarIcon: ({ focused }) => <TabIcon focused={focused} icon={<Map size={24} color={focused ? colors.primary : colors.textMuted} />} name="Map" />,
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
           title: 'Settings',
-          tabBarIcon: ({ focused }) => <TabIcon focused={focused} icon={<Feather name="settings" size={24} color={focused ? colors.primary : colors.textMuted} />} name="Settings" />,
+          tabBarIcon: ({ focused }) => <TabIcon focused={focused} icon={<Settings size={24} color={focused ? colors.primary : colors.textMuted} />} name="Settings" />,
         }}
       />
     </Tabs>
