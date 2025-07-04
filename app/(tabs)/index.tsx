@@ -4,7 +4,7 @@ import { useTripStore } from '@/store/tripStore';
 import { colors } from '@/constants/colors';
 import { format, differenceInCalendarDays } from 'date-fns';
 import { Link } from 'expo-router';
-import { Trip } from '@/types/trip';
+import { Trip } from '@/types';
 
 // --- Reusable Components ---
 
@@ -36,7 +36,7 @@ const TripCard = ({ trip }: { trip: Trip }) => (
         <View style={styles.tripContent}>
             <View style={styles.tripHeaderRow}>
                 <Text style={styles.tripTitle}>{trip.title}</Text>
-                <Link href={`/trips/edit/${trip.id}`} asChild>
+                <Link href={`/trips/new`} asChild>
                     <TouchableOpacity>
                         <Text style={styles.editButton}>Edit</Text>
                     </TouchableOpacity>
@@ -86,16 +86,16 @@ export default function DashboardScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: colors.background.primary, paddingHorizontal: 20 },
+    container: { flex: 1, backgroundColor: colors.background, paddingHorizontal: 20 },
     header: { alignItems: 'center', marginVertical: 20, paddingTop: 20 },
-    appName: { fontSize: 28, fontWeight: '800', color: colors.text.primary, letterSpacing: 1.5, textAlign: 'center' },
-    subtitle: { color: colors.text.secondary, marginTop: 8, fontSize: 16 },
+    appName: { fontSize: 28, fontWeight: '800', color: colors.text, letterSpacing: 1.5, textAlign: 'center' },
+    subtitle: { color: colors.textSecondary, marginTop: 8, fontSize: 16 },
     actionsContainer: { flexDirection: 'row', gap: 12, marginBottom: 20 },
-    btnPrimary: { flex: 1, backgroundColor: colors.accent.primary, padding: 16, borderRadius: 12, alignItems: 'center' },
-    btnSecondary: { flex: 1, backgroundColor: colors.background.secondary, padding: 16, borderRadius: 12, alignItems: 'center', borderWidth: 1, borderColor: colors.border },
-    btnText: { color: colors.text.primary, fontWeight: '600' },
+    btnPrimary: { flex: 1, backgroundColor: colors.primary, padding: 16, borderRadius: 12, alignItems: 'center' },
+    btnSecondary: { flex: 1, backgroundColor: colors.surface, padding: 16, borderRadius: 12, alignItems: 'center', borderWidth: 1, borderColor: colors.border },
+    btnText: { color: colors.text, fontWeight: '600' },
     tripCard: { 
-        backgroundColor: colors.background.card, 
+        backgroundColor: colors.surface, 
         borderRadius: 16, 
         borderWidth: 1, 
         borderColor: colors.border,
@@ -110,13 +110,13 @@ const styles = StyleSheet.create({
         padding: 24,
     },
     tripHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-    tripTitle: { fontSize: 24, fontWeight: '700', color: colors.accent.primary, marginBottom: 8, flex: 1 },
-    editButton: { color: colors.accent.primary, fontWeight: '600', fontSize: 16 },
-    tripDates: { color: colors.text.secondary, marginBottom: 16 },
-    tripDescription: { color: colors.text.secondary, lineHeight: 22, marginBottom: 24 },
-    countdownCard: { backgroundColor: `${colors.accent.primary}20`, borderRadius: 12, padding: 20, alignItems: 'center', borderWidth: 1, borderColor: `${colors.accent.primary}40` },
-    countdownLabel: { color: colors.text.secondary, fontSize: 14 },
-    countdownValue: { color: colors.accent.primary, fontSize: 64, fontWeight: 'bold', marginVertical: 4 },
-    countdownDays: { color: colors.accent.primary, fontSize: 20, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 1 },
-    countdownSublabel: { color: colors.text.secondary, fontSize: 12, marginTop: 8 },
+    tripTitle: { fontSize: 24, fontWeight: '700', color: colors.primary, marginBottom: 8, flex: 1 },
+    editButton: { color: colors.primary, fontWeight: '600', fontSize: 16 },
+    tripDates: { color: colors.textSecondary, marginBottom: 16 },
+    tripDescription: { color: colors.textSecondary, lineHeight: 22, marginBottom: 24 },
+    countdownCard: { backgroundColor: colors.primaryMuted, borderRadius: 12, padding: 20, alignItems: 'center', borderWidth: 1, borderColor: colors.primary + '40' },
+    countdownLabel: { color: colors.textSecondary, fontSize: 14 },
+    countdownValue: { color: colors.primary, fontSize: 64, fontWeight: 'bold', marginVertical: 4 },
+    countdownDays: { color: colors.primary, fontSize: 20, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 1 },
+    countdownSublabel: { color: colors.textSecondary, fontSize: 12, marginTop: 8 },
 });

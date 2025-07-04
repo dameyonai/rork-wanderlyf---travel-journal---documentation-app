@@ -17,22 +17,6 @@ export interface JournalEntry {
   mood?: string;
 }
 
-export interface Photo {
-  id: string;
-  tripId: string;
-  imageUri: string;
-  caption?: string;
-  location: Location;
-  date: string;
-}
-
-export interface GalleryPhoto {
-  id: string;
-  caption: string;
-  description: string;
-  imageUri: string;
-}
-
 export interface TripStats {
   distanceTraveled: number;
   placesVisited: number;
@@ -50,4 +34,13 @@ export interface Trip {
   stats: TripStats;
   locations: Location[];
   isActive: boolean;
+}
+
+export interface Photo {
+  id: string;
+  tripId: string;
+  imageUri: string;
+  caption?: string;
+  location: Location;
+  date: string;
 }
