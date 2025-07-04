@@ -45,7 +45,7 @@ export const Button: React.FC<ButtonProps> = ({
         ]}
       >
         <LinearGradient
-          colors={[colors.accent.primary, colors.accent.secondary]}
+          colors={[colors.primary, colors.secondary]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.gradient}
@@ -75,7 +75,7 @@ export const Button: React.FC<ButtonProps> = ({
       ]}
     >
       {loading ? (
-        <ActivityIndicator color={colors.accent.primary} />
+        <ActivityIndicator color={colors.primary} />
       ) : (
         <>
           {icon}
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   secondaryButton: {
-    backgroundColor: colors.background.secondary,
+    backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
     paddingVertical: 14,
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   secondaryText: {
-    color: colors.text.primary,
+    color: colors.text,
   },
   disabled: {
     opacity: 0.5,

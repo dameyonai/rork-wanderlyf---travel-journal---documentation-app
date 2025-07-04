@@ -13,27 +13,27 @@ export const TabBar: React.FC = () => {
     {
       name: 'Home',
       path: '/',
-      icon: (active: boolean) => <Home size={20} color={active ? colors.accent.primary : colors.text.tertiary} />,
+      icon: (active: boolean) => <Home size={20} color={active ? colors.primary : colors.textMuted} />,
     },
     {
       name: 'Journal',
       path: '/journal',
-      icon: (active: boolean) => <BookOpen size={20} color={active ? colors.accent.primary : colors.text.tertiary} />,
+      icon: (active: boolean) => <BookOpen size={20} color={active ? colors.primary : colors.textMuted} />,
     },
     {
       name: 'Photos',
       path: '/photos',
-      icon: (active: boolean) => <Camera size={20} color={active ? colors.accent.primary : colors.text.tertiary} />,
+      icon: (active: boolean) => <Camera size={20} color={active ? colors.primary : colors.textMuted} />,
     },
     {
       name: 'Map',
       path: '/map',
-      icon: (active: boolean) => <Map size={20} color={active ? colors.accent.primary : colors.text.tertiary} />,
+      icon: (active: boolean) => <Map size={20} color={active ? colors.primary : colors.textMuted} />,
     },
     {
       name: 'Settings',
       path: '/settings',
-      icon: (active: boolean) => <Settings size={20} color={active ? colors.accent.primary : colors.text.tertiary} />,
+      icon: (active: boolean) => <Settings size={20} color={active ? colors.primary : colors.textMuted} />,
     },
   ];
   
@@ -74,7 +74,7 @@ export const TabBar: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: colors.background.primary,
+    backgroundColor: colors.background,
     borderTopWidth: 1,
     borderTopColor: colors.border,
     paddingBottom: Platform.OS === 'ios' ? 24 : 12,
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
   },
   activeTabText: {
-    color: colors.accent.primary,
+    color: colors.primary,
     fontWeight: '600',
   },
 });

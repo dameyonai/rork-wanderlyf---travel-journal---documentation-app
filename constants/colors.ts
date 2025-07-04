@@ -1,20 +1,20 @@
 export const colors = {
-  background: {
-    primary: '#0a0a0a',
-    secondary: '#1a1a1a',
-    card: '#1a1a1a',
-    input: '#222222',
-  },
-  text: {
-    primary: '#ffffff',
-    secondary: '#cccccc',
-    tertiary: '#999999',
-  },
-  accent: {
-    primary: '#ff6b35',
-    secondary: '#ff8c42',
-  },
+  background: '#0a0a0a',
+  surface: '#1a1a1a',
+  text: '#ffffff',
+  textSecondary: '#cccccc',
+  textMuted: '#999999',
+  primary: '#ff6b35',
+  primaryMuted: 'rgba(255, 107, 53, 0.15)',
+  secondary: '#ff8c42',
   border: '#333333',
+  black: '#000000',
+  white: '#ffffff',
   success: '#4CAF50',
   error: '#F44336',
+  chocolate: {
+    DEFAULT: '#d2691e',
+    muted: 'rgba(210, 105, 30, 0.08)',
+    border: 'rgba(210, 105, 30, 0.2)',
+  },
 };

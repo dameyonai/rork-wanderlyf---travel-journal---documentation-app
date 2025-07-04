@@ -15,7 +15,7 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   return (
     <LinearGradient
-      colors={[colors.background.secondary, colors.background.primary]}
+      colors={[colors.surface, colors.background]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.container}
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     marginBottom: 8,
     // Create gradient text effect
-    color: colors.accent.primary,
+    color: colors.primary,
   },
   subtitle: {
     ...typography.subtitle,
