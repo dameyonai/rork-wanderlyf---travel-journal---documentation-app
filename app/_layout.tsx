@@ -3,7 +3,7 @@ import { Platform, View } from 'react-native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
-import { colors } from '@/constants/colors';
+import { colors } from '../constants/Colors';
 
 // Prevent the splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
@@ -24,20 +24,20 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background.primary }}>
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
       <StatusBar style="light" />
       <Stack
         screenOptions={{
           headerStyle: {
-            backgroundColor: colors.background.primary,
+            backgroundColor: colors.background,
           },
-          headerTintColor: colors.text.primary,
+          headerTintColor: colors.text,
           headerTitleStyle: {
             fontWeight: '600',
           },
           headerShadowVisible: false,
           contentStyle: {
-            backgroundColor: colors.background.primary,
+            backgroundColor: colors.background,
           },
         }}
       >
@@ -120,8 +120,7 @@ export default function RootLayout() {
         <Stack.Screen 
           name="trips/new" 
           options={{ 
-            title: 'New Trip',
-            headerBackTitle: 'Home',
+            headerShown: false,
             presentation: 'modal',
           }} 
         />

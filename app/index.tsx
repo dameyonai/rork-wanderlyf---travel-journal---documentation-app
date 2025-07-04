@@ -2,79 +2,61 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors } from '@/constants/colors';
-import { typography } from '@/constants/typography';
-import { Header } from '@/components/Header';
-import { Button } from '@/components/Button';
-import { TripHeader } from '@/components/TripHeader';
-import { JournalEntryCard } from '@/components/JournalEntryCard';
-import { TabBar } from '@/components/TabBar';
-import { useTripStore } from '@/store/tripStore';
-import { Plus, Filter } from 'lucide-react-native';
-import { formatDateRange } from '@/utils/dateUtils';
+import { colors } from '../constants/Colors';
+import { useTripStore } from '../store/tripStore';
+import { format, differenceInCalendarDays } from 'date-fns';
+import { Link } from 'expo-router';
+import { Trip } from '../types';
 
-export default function HomeScreen() {
-  const router = useRouter();
-  const { activeTrip, journalEntries, getEntriesForTrip } = useTripStore();
-  
-  const recentEntries = activeTrip 
-    ? getEntriesForTrip(activeTrip.id).slice(0, 3)
-    : [];
+// --- Reusable Components ---
 
-  // Calculate actual stats based on current data
-  const getActualStats = () => {
-    if (!activeTrip) return null;
-    
-    const tripEntries = getEntriesForTrip(activeTrip.id);
-    const now = new Date();
-    const startDate = new Date(activeTrip.startDate);
-    const endDate = new Date(activeTrip.endDate);
-    
-    // Check if trip hasn't started yet
-    if (now < startDate) {
-      const daysUntilStart = Math.ceil((startDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-      return {
-        type: 'countdown',
-        daysUntilStart,
-        totalDays: Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1,
-      };
+const CountdownCard = ({ trip }: { trip: Trip }) => {
+    const today = new Date();
+    const startDate = new Date(trip.startDate);
+    const endDate = new Date(trip.endDate);
+    const daysUntilStart = differenceInCalendarDays(startDate, today);
+    const tripDuration = differenceInCalendarDays(endDate, startDate) + 1;
+
+    if (daysUntilStart > 0) {
+        return (
+            <View style={styles.countdownCard}>
+                <Text style={styles.countdownLabel}>Trip starts in</Text>
+                <Text style={styles.countdownValue}>{daysUntilStart}</Text>
+                <Text style={styles.countdownDays}>days</Text>
+                <Text style={styles.countdownSublabel}>{tripDuration} day trip planned</Text>
+            </View>
+        );
     }
-    
-    // Trip is in progress or completed
-    const photosCount = tripEntries.filter(entry => entry.imageUri).length;
-    const uniqueLocations = new Set(tripEntries.map(entry => entry.location.name));
-    const placesVisited = uniqueLocations.size;
-    
-    // Calculate days elapsed
-    const daysElapsed = Math.min(
-      Math.ceil((now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)),
-      Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1
-    );
-    
-    return {
-      type: 'active',
-      distanceTraveled: activeTrip.stats.distanceTraveled || 0,
-      placesVisited,
-      photosCount,
-      daysElapsed,
-      totalDays: Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1,
-      isCompleted: now > endDate,
-    };
-  };
+    return null;
+};
 
-  const stats = getActualStats();
-  
-  const handleNewEntry = () => {
-    router.push('/journal/new');
-  };
-  
-  const handleViewAllEntries = () => {
-    router.push('/journal');
-  };
-  
-  const handleNewTrip = () => {
-    router.push('/trips/new');
-  };
+const TripCard = ({ trip }: { trip: Trip }) => (
+    <View style={styles.tripCard}>
+        {trip.vehicleImageUri && (
+            <Image source={{ uri: trip.vehicleImageUri }} style={styles.tripImage} />
+        )}
+        <View style={styles.tripContent}>
+            <View style={styles.tripHeaderRow}>
+                <Text style={styles.tripTitle}>{trip.title}</Text>
+                <Link href={`/trips/edit/${trip.id}`} asChild>
+                    <TouchableOpacity>
+                        <Text style={styles.editButton}>Edit</Text>
+                    </TouchableOpacity>
+                </Link>
+            </View>
+            <Text style={styles.tripDates}>
+                {format(new Date(trip.startDate), 'MMM dd')} - {format(new Date(trip.endDate), 'MMM dd, yyyy')}
+            </Text>
+            <Text style={styles.tripDescription}>{trip.description}</Text>
+            <CountdownCard trip={trip} />
+        </View>
+    </View>
+);
+
+// --- Main Screen ---
+
+export default function DashboardScreen() {
+  const trips = useTripStore((state) => state.trips);
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>

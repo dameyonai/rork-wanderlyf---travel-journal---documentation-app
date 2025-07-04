@@ -9,23 +9,19 @@ import {
   Image,
   Platform,
   Alert,
+  SafeAreaView,
+  KeyboardAvoidingView,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
-import { colors } from '@/constants/colors';
-import { typography } from '@/constants/typography';
-import { Button } from '@/components/Button';
-import { useTripStore } from '@/store/tripStore';
-import { generateId } from '@/utils/idGenerator';
-import { calculateDaysBetween } from '@/utils/dateUtils';
-import { Camera, X } from 'lucide-react-native';
+import { colors } from '../../constants/Colors';
+import { useTripStore } from '../../store/tripStore';
+import { Camera, X, ChevronLeft } from 'lucide-react-native';
 
 export default function NewTripScreen() {
   const router = useRouter();
-  const { addTrip, setActiveTrip } = useTripStore();
+  const { addTrip } = useTripStore();
   
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -33,28 +29,8 @@ export default function NewTripScreen() {
   const [endDate, setEndDate] = useState(new Date());
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [datePickerMode, setDatePickerMode] = useState<'start' | 'end'>('start');
 
-  const handleDateChange = (event: any, selectedDate?: Date) => {
-    setShowDatePicker(false);
-    if (selectedDate) {
-      if (datePickerMode === 'start') {
-        setStartDate(selectedDate);
-        // If start date is after end date, update end date
-        if (selectedDate > endDate) {
-          setEndDate(selectedDate);
-        }
-      } else {
-        setEndDate(selectedDate);
-      }
-    }
-  };
 
-  const showDatepickerFor = (mode: 'start' | 'end') => {
-    setDatePickerMode(mode);
-    setShowDatePicker(true);
-  };
   
   const handlePickImage = async () => {
     try {
@@ -88,7 +64,7 @@ export default function NewTripScreen() {
   
   const handleSubmit = () => {
     if (!title || !description) {
-      Alert.alert('Validation Error', 'Please fill in all required fields');
+      Alert.alert('Missing Information', 'Please fill in all required fields');
       return;
     }
     
@@ -100,136 +76,124 @@ export default function NewTripScreen() {
     
     setIsSubmitting(true);
     
-    // Create new trip
-    const tripId = generateId();
-    const newTrip = {
-      id: tripId,
+    // Create new trip using the store's addTrip method
+    const newTripData = {
       title,
       description,
-      startDate: startDate.toISOString().split('T')[0],
-      endDate: endDate.toISOString().split('T')[0],
-      coverImageUri: imageUri || undefined,
-      stats: {
-        distanceTraveled: 0,
-        placesVisited: 0,
-        photosCount: 0,
-        daysOnTrip: calculateDaysBetween(
-          startDate.toISOString().split('T')[0], 
-          endDate.toISOString().split('T')[0]
-        ),
-      },
-      locations: [],
-      isActive: true,
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
+      vehicleImageUri: imageUri || undefined,
     };
     
-    // Add to store and set as active
-    addTrip(newTrip);
-    setActiveTrip(tripId);
+    addTrip(newTripData);
     
     // Navigate back to home
-    router.push('/');
+    router.replace('/');
   };
   
   return (
-    <SafeAreaView style={styles.container} edges={['bottom']}>
-      <ScrollView 
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView 
+        style={{ flex: 1 }} 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <View style={styles.imageContainer}>
-          {imageUri ? (
-            <View style={styles.imagePreviewContainer}>
-              <Image source={{ uri: imageUri }} style={styles.imagePreview} />
-              <TouchableOpacity 
-                style={styles.removeImageButton}
-                onPress={handleRemoveImage}
-              >
-                <X size={20} color="white" />
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <TouchableOpacity 
-              style={styles.imagePicker}
-              onPress={handlePickImage}
-            >
-              <View style={styles.imagePickerContent}>
-                <Camera size={32} color={colors.text.secondary} />
-                <Text style={styles.imagePickerText}>Add Cover Photo</Text>
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+            <ChevronLeft size={24} color={colors.text} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>New Trip</Text>
+          <TouchableOpacity 
+            onPress={handleSubmit} 
+            disabled={isSubmitting || !title || !description}
+            style={[styles.saveButton, (!title || !description) && styles.saveButtonDisabled]}
+          >
+            <Text style={[styles.saveButtonText, (!title || !description) && styles.saveButtonTextDisabled]}>
+              {isSubmitting ? 'Creating...' : 'Create'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <ScrollView 
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          {/* Cover Image */}
+          <View style={styles.imageContainer}>
+            {imageUri ? (
+              <View style={styles.imagePreviewContainer}>
+                <Image source={{ uri: imageUri }} style={styles.imagePreview} />
+                <TouchableOpacity 
+                  style={styles.removeImageButton}
+                  onPress={handleRemoveImage}
+                >
+                  <X size={20} color={colors.white} />
+                </TouchableOpacity>
               </View>
-            </TouchableOpacity>
-          )}
-        </View>
-        
-        <View style={styles.formGroup}>
-          <Text style={styles.label}>Trip Title</Text>
-          <TextInput
-            style={styles.input}
-            value={title}
-            onChangeText={setTitle}
-            placeholder="Give your trip a name"
-            placeholderTextColor={colors.text.tertiary}
-          />
-        </View>
-        
-        <View style={styles.formGroup}>
-          <Text style={styles.label}>Description</Text>
-          <TextInput
-            style={styles.textArea}
-            value={description}
-            onChangeText={setDescription}
-            placeholder="What's this trip about?"
-            placeholderTextColor={colors.text.tertiary}
-            multiline
-            textAlignVertical="top"
-          />
-        </View>
-        
-        <View style={styles.dateContainer}>
-          <View style={styles.dateField}>
-            <Text style={styles.label}>Start Date</Text>
-            <TouchableOpacity 
-              style={styles.dateButton} 
-              onPress={() => showDatepickerFor('start')}
-            >
-              <Text style={styles.dateText}>
-                {format(startDate, 'MMMM dd, yyyy')}
-              </Text>
-            </TouchableOpacity>
+            ) : (
+              <TouchableOpacity 
+                style={styles.imagePicker}
+                onPress={handlePickImage}
+              >
+                <View style={styles.imagePickerContent}>
+                  <Camera size={32} color={colors.textMuted} />
+                  <Text style={styles.imagePickerText}>Add Vehicle Photo</Text>
+                  <Text style={styles.imagePickerSubtext}>Optional</Text>
+                </View>
+              </TouchableOpacity>
+            )}
           </View>
           
-          <View style={styles.dateField}>
-            <Text style={styles.label}>End Date</Text>
-            <TouchableOpacity 
-              style={styles.dateButton} 
-              onPress={() => showDatepickerFor('end')}
-            >
-              <Text style={styles.dateText}>
-                {format(endDate, 'MMMM dd, yyyy')}
-              </Text>
-            </TouchableOpacity>
+          {/* Trip Title */}
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Trip Title *</Text>
+            <TextInput
+              style={styles.input}
+              value={title}
+              onChangeText={setTitle}
+              placeholder="e.g. NT Outback Adventure"
+              placeholderTextColor={colors.textMuted}
+            />
           </View>
-        </View>
-        
-        <Button 
-          title="Create Trip" 
-          onPress={handleSubmit}
-          loading={isSubmitting}
-          style={styles.submitButton}
-        />
-      </ScrollView>
-
-      {showDatePicker && (
-        <DateTimePicker
-          testID="dateTimePicker"
-          value={datePickerMode === 'start' ? startDate : endDate}
-          mode="date"
-          is24Hour={true}
-          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-          onChange={handleDateChange}
-        />
-      )}
+          
+          {/* Description */}
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Description *</Text>
+            <TextInput
+              style={styles.textArea}
+              value={description}
+              onChangeText={setDescription}
+              placeholder="Tell us about your upcoming adventure..."
+              placeholderTextColor={colors.textMuted}
+              multiline
+              textAlignVertical="top"
+            />
+          </View>
+          
+          {/* Dates */}
+          <View style={styles.dateContainer}>
+            <View style={styles.dateField}>
+              <Text style={styles.label}>Start Date</Text>
+              <Text style={styles.dateDisplay}>
+                {format(startDate, 'MMM dd, yyyy')}
+              </Text>
+            </View>
+            
+            <View style={styles.dateField}>
+              <Text style={styles.label}>End Date</Text>
+              <Text style={styles.dateDisplay}>
+                {format(endDate, 'MMM dd, yyyy')}
+              </Text>
+            </View>
+          </View>
+          
+          <Text style={styles.dateNote}>
+            💡 You can adjust dates later in trip settings
+          </Text>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -237,7 +201,41 @@ export default function NewTripScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.primary,
+    backgroundColor: colors.background,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  backButton: {
+    padding: 4,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: colors.text,
+  },
+  saveButton: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  saveButtonDisabled: {
+    backgroundColor: colors.surface,
+  },
+  saveButtonText: {
+    color: colors.white,
+    fontWeight: '600',
+    fontSize: 16,
+  },
+  saveButtonTextDisabled: {
+    color: colors.textMuted,
   },
   scrollView: {
     flex: 1,
@@ -247,14 +245,15 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   imageContainer: {
-    marginBottom: 24,
+    marginBottom: 32,
   },
   imagePicker: {
     height: 200,
-    backgroundColor: colors.background.secondary,
-    borderRadius: 12,
+    backgroundColor: colors.surface,
+    borderRadius: 16,
     borderWidth: 1,
     borderColor: colors.border,
+    borderStyle: 'dashed',
     overflow: 'hidden',
   },
   imagePickerContent: {
@@ -264,13 +263,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   imagePickerText: {
-    ...typography.caption,
-    marginTop: 8,
+    color: colors.text,
+    fontSize: 16,
+    fontWeight: '500',
+    marginTop: 12,
+  },
+  imagePickerSubtext: {
+    color: colors.textMuted,
+    fontSize: 14,
+    marginTop: 4,
   },
   imagePreviewContainer: {
     position: 'relative',
     height: 200,
-    borderRadius: 12,
+    borderRadius: 16,
     overflow: 'hidden',
   },
   imagePreview: {
@@ -281,7 +287,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 12,
     right: 12,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
     width: 36,
     height: 36,
     borderRadius: 18,
@@ -292,27 +298,29 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   label: {
-    ...typography.caption,
+    color: colors.text,
+    fontSize: 16,
+    fontWeight: '600',
     marginBottom: 8,
   },
   input: {
-    backgroundColor: colors.background.input,
-    borderRadius: 8,
+    backgroundColor: colors.surface,
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: colors.border,
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    color: colors.text.primary,
+    paddingVertical: 16,
+    color: colors.text,
     fontSize: 16,
   },
   textArea: {
-    backgroundColor: colors.background.input,
-    borderRadius: 8,
+    backgroundColor: colors.surface,
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: colors.border,
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    color: colors.text.primary,
+    paddingVertical: 16,
+    color: colors.text,
     fontSize: 16,
     minHeight: 120,
     ...Platform.select({
@@ -323,26 +331,26 @@ const styles = StyleSheet.create({
   },
   dateContainer: {
     flexDirection: 'row',
-    gap: 12,
-    marginBottom: 24,
+    gap: 16,
+    marginBottom: 16,
   },
   dateField: {
     flex: 1,
   },
-  dateButton: {
-    backgroundColor: colors.background.input,
-    borderRadius: 8,
+  dateDisplay: {
+    backgroundColor: colors.surface,
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: colors.border,
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    justifyContent: 'center',
-  },
-  dateText: {
-    color: colors.text.primary,
+    paddingVertical: 16,
+    color: colors.text,
     fontSize: 16,
   },
-  submitButton: {
-    marginTop: 16,
+  dateNote: {
+    color: colors.textMuted,
+    fontSize: 14,
+    textAlign: 'center',
+    marginBottom: 20,
   },
 });
