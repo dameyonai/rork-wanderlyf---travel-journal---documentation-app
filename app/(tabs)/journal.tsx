@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { Link } from 'expo-router';
-import { colors } from '../../constants/colors';
-import { useTripStore } from '../../store/tripStore';
-import { JournalEntryCard } from '../../components/JournalEntryCard';
+import { colors } from '@/constants/colors';
+import { useTripStore } from '@/store/tripStore';
+import { JournalEntryCard } from '@/components/JournalEntryCard';
 import { Plus } from 'lucide-react-native';
 
 export default function JournalTabScreen() {
