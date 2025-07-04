@@ -1,145 +1,132 @@
-import { useEffect } from 'react';
-import { Platform, View } from 'react-native';
-import { Stack } from 'expo-router';
+import React from 'react';
+import { Tabs } from 'expo-router';
+import { colors } from '../constants/Colors';
+import { Feather } from '@expo/vector-icons';
+import { View, Text, StyleSheet, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import * as SplashScreen from 'expo-splash-screen';
-import { colors } from '../constants/colors';
 
-// Prevent the splash screen from auto-hiding
-SplashScreen.preventAutoHideAsync();
-
-export const unstable_settings = {
-  initialRouteName: '/',
-};
+const TabIcon = ({ focused, icon, name }: { focused: boolean; icon: React.ReactNode; name: string }) => (
+  <View style={styles.tabIconContainer}>
+    {icon}
+    <Text style={[styles.tabLabel, { color: focused ? colors.primary : colors.textMuted }]}>{name}</Text>
+  </View>
+);
 
 export default function RootLayout() {
-  useEffect(() => {
-    // Hide the splash screen after a delay
-    const hideSplash = async () => {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      await SplashScreen.hideAsync();
-    };
-    
-    hideSplash();
-  }, []);
-
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background }}>
+    <>
       <StatusBar style="light" />
-      <Stack
+      <Tabs
         screenOptions={{
-          headerStyle: {
-            backgroundColor: colors.background,
-          },
-          headerTintColor: colors.text,
-          headerTitleStyle: {
-            fontWeight: '600',
-          },
-          headerShadowVisible: false,
-          contentStyle: {
-            backgroundColor: colors.background,
-          },
+          headerShown: false,
+          tabBarShowLabel: false,
+          tabBarStyle: styles.tabBar,
         }}
       >
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-
-        <Stack.Screen 
-          name="journal/[id]" 
-          options={{ 
-            title: 'Entry Details',
-            headerBackTitle: 'Journal',
-          }} 
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: 'Home',
+            tabBarIcon: ({ focused }) => (
+              <TabIcon
+                focused={focused}
+                icon={<Feather name="home" size={24} color={focused ? colors.primary : colors.textMuted} />}
+                name="Home"
+              />
+            ),
+          }}
         />
-        <Stack.Screen 
-          name="journal/new" 
-          options={{ 
-            title: 'New Entry',
-            headerBackTitle: 'Journal',
-            presentation: 'modal',
-          }} 
+        <Tabs.Screen
+          name="journal"
+          options={{
+            title: 'Journal',
+            tabBarIcon: ({ focused }) => (
+              <TabIcon
+                focused={focused}
+                icon={<Feather name="book-open" size={24} color={focused ? colors.primary : colors.textMuted} />}
+                name="Journal"
+              />
+            ),
+          }}
         />
-        <Stack.Screen 
-          name="journal/edit/[id]" 
-          options={{ 
-            title: 'Edit Entry',
-            headerBackTitle: 'Details',
-            presentation: 'modal',
-          }} 
+        <Tabs.Screen
+          name="gallery"
+          options={{
+            title: 'Photos',
+            tabBarIcon: ({ focused }) => (
+              <TabIcon
+                focused={focused}
+                icon={<Feather name="image" size={24} color={focused ? colors.primary : colors.textMuted} />}
+                name="Photos"
+              />
+            ),
+          }}
         />
-
-        <Stack.Screen 
-          name="photos/[id]" 
-          options={{ 
-            title: 'Photo',
-            headerBackTitle: 'Photos',
-          }} 
+        <Tabs.Screen
+          name="checklist"
+          options={{
+            title: 'Checklist',
+            tabBarIcon: ({ focused }) => (
+              <TabIcon
+                focused={focused}
+                icon={<Feather name="check-square" size={24} color={focused ? colors.primary : colors.textMuted} />}
+                name="Checklist"
+              />
+            ),
+          }}
         />
-        <Stack.Screen 
-          name="photos/new" 
-          options={{ 
-            title: 'Add Photo',
-            headerBackTitle: 'Photos',
-            presentation: 'modal',
-          }} 
+        <Tabs.Screen
+          name="map"
+          options={{
+            title: 'Map',
+            tabBarIcon: ({ focused }) => (
+              <TabIcon
+                focused={focused}
+                icon={<Feather name="map" size={24} color={focused ? colors.primary : colors.textMuted} />}
+                name="Map"
+              />
+            ),
+          }}
         />
-
-        <Stack.Screen 
-          name="gallery/edit/[id]" 
-          options={{ 
-            title: 'Edit Photo',
-            headerBackTitle: 'Gallery',
-            presentation: 'modal',
-          }} 
+        <Tabs.Screen
+          name="settings"
+          options={{
+            title: 'Settings',
+            tabBarIcon: ({ focused }) => (
+              <TabIcon
+                focused={focused}
+                icon={<Feather name="settings" size={24} color={focused ? colors.primary : colors.textMuted} />}
+                name="Settings"
+              />
+            ),
+          }}
         />
-
-
-        <Stack.Screen 
-          name="gear/[category]" 
-          options={{ 
-            title: 'Category',
-            headerBackTitle: 'Gear',
-          }} 
-        />
-        <Stack.Screen 
-          name="gear/new" 
-          options={{ 
-            title: 'Add Gear Item',
-            headerBackTitle: 'Gear',
-            presentation: 'modal',
-          }} 
-        />
-
-        <Stack.Screen 
-          name="settings/profile" 
-          options={{ 
-            title: 'Edit Profile',
-            headerBackTitle: 'Settings',
-            presentation: 'modal',
-          }} 
-        />
-        <Stack.Screen 
-          name="trips/new" 
-          options={{ 
-            headerShown: false,
-            presentation: 'modal',
-          }} 
-        />
-        <Stack.Screen 
-          name="vehicle/index" 
-          options={{ 
-            title: 'My Vehicle',
-            headerBackTitle: 'Settings',
-          }} 
-        />
-        <Stack.Screen 
-          name="vehicle/new-mod" 
-          options={{ 
-            title: 'Add Modification',
-            headerBackTitle: 'Vehicle',
-            presentation: 'modal',
-          }} 
-        />
-      </Stack>
-    </View>
+      </Tabs>
+    </>
   );
 }
+
+const styles = StyleSheet.create({
+  tabIconContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+    paddingTop: Platform.OS === 'ios' ? 10 : 5,
+  },
+  tabLabel: {
+    fontSize: 10,
+    fontWeight: '500',
+  },
+  tabBar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    elevation: 0,
+    backgroundColor: colors.surface,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+    height: Platform.OS === 'ios' ? 85 : 70,
+    paddingBottom: Platform.OS === 'ios' ? 20 : 5,
+  },
+});
