@@ -71,7 +71,7 @@ export default function DashboardScreen() {
     router.push('/journal');
   };
 
-  const activeTrip = trips.find(trip => trip.isActive) || trips[0];
+  const activeTrip = useTripStore((state) => state.getActiveTrip());
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
