@@ -41,14 +41,8 @@ export default function RootLayout() {
           },
         }}
       >
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen 
-          name="journal/index" 
-          options={{ 
-            title: 'Journal',
-            headerBackTitle: 'Home',
-          }} 
-        />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+
         <Stack.Screen 
           name="journal/[id]" 
           options={{ 
@@ -72,13 +66,7 @@ export default function RootLayout() {
             presentation: 'modal',
           }} 
         />
-        <Stack.Screen 
-          name="photos/index" 
-          options={{ 
-            title: 'Photos',
-            headerBackTitle: 'Home',
-          }} 
-        />
+
         <Stack.Screen 
           name="photos/[id]" 
           options={{ 
@@ -94,14 +82,7 @@ export default function RootLayout() {
             presentation: 'modal',
           }} 
         />
-        <Stack.Screen 
-          name="gallery/index" 
-          options={{ 
-            title: 'Gallery',
-            headerBackTitle: 'Home',
-            headerShown: false,
-          }} 
-        />
+
         <Stack.Screen 
           name="gallery/edit/[id]" 
           options={{ 
@@ -110,20 +91,8 @@ export default function RootLayout() {
             presentation: 'modal',
           }} 
         />
-        <Stack.Screen 
-          name="map/index" 
-          options={{ 
-            title: 'Trip Map',
-            headerBackTitle: 'Home',
-          }} 
-        />
-        <Stack.Screen 
-          name="gear/index" 
-          options={{ 
-            title: 'Gear',
-            headerBackTitle: 'Home',
-          }} 
-        />
+
+
         <Stack.Screen 
           name="gear/[category]" 
           options={{ 
@@ -139,13 +108,7 @@ export default function RootLayout() {
             presentation: 'modal',
           }} 
         />
-        <Stack.Screen 
-          name="settings/index" 
-          options={{ 
-            title: 'Settings',
-            headerBackTitle: 'Home',
-          }} 
-        />
+
         <Stack.Screen 
           name="settings/profile" 
           options={{ 
