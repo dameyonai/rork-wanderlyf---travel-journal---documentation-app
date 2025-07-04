@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
-import { colors } from '../constants/Colors';
+import { colors } from '../constants/colors';
 import { Feather } from '@expo/vector-icons';
 import { View, Text, StyleSheet, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
