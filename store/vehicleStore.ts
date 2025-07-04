@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Vehicle, VehicleMod } from '@/types/vehicle';
+import { Vehicle, VehicleMod } from '@/types';
 import { generateId } from '@/utils/idGenerator';
 
 // Mock data for the vehicle
@@ -13,19 +13,16 @@ const mockVehicle: Vehicle = {
       id: 'mod-1', 
       name: 'Rooftop Tent', 
       description: '23ZERO Walkabout 62 - Perfect for outback camping',
-      dateAdded: '2024-12-15'
     },
     { 
       id: 'mod-2', 
       name: 'Suspension Lift', 
       description: '2-inch lift with Bilstein shocks for better ground clearance',
-      dateAdded: '2024-11-20'
     },
     { 
       id: 'mod-3', 
       name: 'All-Terrain Tires', 
       description: 'BFGoodrich KO2 - Excellent grip on sand and rocks',
-      dateAdded: '2024-10-10'
     },
   ]
 };
@@ -34,7 +31,7 @@ interface VehicleState {
   vehicle: Vehicle;
   
   // Actions
-  addModification: (newModData: Omit<VehicleMod, 'id' | 'dateAdded'>) => void;
+  addModification: (newModData: Omit<VehicleMod, 'id'>) => void;
   updateModification: (modId: string, modData: Partial<VehicleMod>) => void;
   deleteModification: (modId: string) => void;
   updateVehiclePhoto: (uri: string) => void;
@@ -50,7 +47,6 @@ export const useVehicleStore = create<VehicleState>()(
         const newMod: VehicleMod = {
           ...newModData,
           id: generateId(),
-          dateAdded: new Date().toISOString().split('T')[0],
         };
         set((state) => ({
           vehicle: {

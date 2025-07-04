@@ -1,10 +1,26 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Trip, JournalEntry, Location, Photo } from '@/types/trip';
+import { Trip, JournalEntry, Location, Photo } from '@/types';
 import { mockTrips } from '@/mocks/trips';
 import { mockJournalEntries } from '@/mocks/journal-entries';
 import { mockPhotos } from '@/mocks/photos';
+
+interface Photo {
+  id: string;
+  tripId: string;
+  imageUri: string;
+  caption?: string;
+  location: Location;
+  date: string;
+}
+
+interface TripStats {
+  distanceTraveled: number;
+  placesVisited: number;
+  photosCount: number;
+  daysOnTrip: number;
+}
 
 interface TripState {
   trips: Trip[];

@@ -1,12 +1,18 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { GearItem, GearCategory } from '@/types/gear';
+import { GearItem, GearCategory } from '@/types';
 import { mockGearItems, mockGearCategories } from '@/mocks/gear';
+
+interface GearCategoryData {
+  id: string;
+  name: string;
+  icon: string;
+}
 
 interface GearState {
   gearItems: GearItem[];
-  gearCategories: GearCategory[];
+  gearCategories: GearCategoryData[];
   
   // Actions
   addGearItem: (item: GearItem) => void;
@@ -14,8 +20,8 @@ interface GearState {
   deleteGearItem: (itemId: string) => void;
   togglePackedStatus: (itemId: string) => void;
   
-  addGearCategory: (category: GearCategory) => void;
-  updateGearCategory: (categoryId: string, categoryData: Partial<GearCategory>) => void;
+  addGearCategory: (category: GearCategoryData) => void;
+  updateGearCategory: (categoryId: string, categoryData: Partial<GearCategoryData>) => void;
   deleteGearCategory: (categoryId: string) => void;
   
   getItemsByCategory: (categoryId: string) => GearItem[];
@@ -55,13 +61,13 @@ export const useGearStore = create<GearState>()(
         }));
       },
       
-      addGearCategory: (category: GearCategory) => {
+      addGearCategory: (category: GearCategoryData) => {
         set(state => ({
           gearCategories: [...state.gearCategories, category],
         }));
       },
       
-      updateGearCategory: (categoryId: string, categoryData: Partial<GearCategory>) => {
+      updateGearCategory: (categoryId: string, categoryData: Partial<GearCategoryData>) => {
         set(state => ({
           gearCategories: state.gearCategories.map(category => 
             category.id === categoryId ? { ...category, ...categoryData } : category
