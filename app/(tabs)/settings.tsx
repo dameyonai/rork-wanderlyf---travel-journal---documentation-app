@@ -4,6 +4,7 @@ import { colors } from '../../constants/colors';
 import { Link } from 'expo-router';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTripStore } from '../../store/tripStore';
+import { useAssetStore } from '../../store/assetStore';
 import { differenceInCalendarDays } from 'date-fns';
 
 const SettingsItem = ({ title, subtitle, onPress, rightElement }: { title: string, subtitle?: string, onPress?: () => void, rightElement?: React.ReactNode }) => (
@@ -21,6 +22,7 @@ export default function SettingsTabScreen() {
   const [darkModeOn, setDarkModeOn] = React.useState(true);
 
   const trips = useTripStore((state) => state.trips);
+  const assets = useAssetStore((state) => state.assets);
 
   const tripCount = trips.length;
   const totalDays = trips.reduce((sum, trip) => {
@@ -72,6 +74,20 @@ export default function SettingsTabScreen() {
                     <View style={{ flex: 1 }}>
                         <Text style={styles.profileName}>My Vehicle</Text>
                         <Text style={styles.profileStats}>Manage photos and modifications</Text>
+                    </View>
+                    <Feather name="chevron-right" size={24} color={colors.textMuted} />
+                </TouchableOpacity>
+            </Link>
+
+            {/* Digital Assets card */}
+            <Link href="/assets/index" asChild>
+                <TouchableOpacity style={styles.actionCard}>
+                    <View style={styles.actionIconContainer}>
+                        <Feather name="package" size={24} color={colors.textMuted} />
+                    </View>
+                    <View style={{ flex: 1 }}>
+                        <Text style={styles.profileName}>Digital Assets</Text>
+                        <Text style={styles.profileStats}>Manage {assets.length} {assets.length === 1 ? 'device' : 'devices'} and equipment</Text>
                     </View>
                     <Feather name="chevron-right" size={24} color={colors.textMuted} />
                 </TouchableOpacity>

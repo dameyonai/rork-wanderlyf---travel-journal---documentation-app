@@ -1,10 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { useTripStore } from '@/store/tripStore';
+import { useAssetStore } from '@/store/assetStore';
 import { colors } from '@/constants/colors';
 import { format, differenceInCalendarDays } from 'date-fns';
 import { Link } from 'expo-router';
 import { Trip } from '@/types';
+import { AssetCard } from '@/components/AssetCard';
 
 // --- Reusable Components ---
 
@@ -51,6 +53,33 @@ const TripCard = ({ trip }: { trip: Trip }) => (
     </View>
 );
 
+const QuickAssetsSection = () => {
+    const { assets } = useAssetStore();
+    const recentAssets = assets.slice(0, 3);
+
+    if (assets.length === 0) return null;
+
+    return (
+        <View style={styles.quickSection}>
+            <View style={styles.quickSectionHeader}>
+                <Text style={styles.quickSectionTitle}>Digital Assets</Text>
+                <Link href="/assets/index" asChild>
+                    <TouchableOpacity>
+                        <Text style={styles.quickSectionLink}>View All</Text>
+                    </TouchableOpacity>
+                </Link>
+            </View>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.assetsScroll}>
+                {recentAssets.map((asset) => (
+                    <View key={asset.id} style={styles.assetCardContainer}>
+                        <AssetCard asset={asset} compact />
+                    </View>
+                ))}
+            </ScrollView>
+        </View>
+    );
+};
+
 // --- Main Screen ---
 
 export default function DashboardScreen() {
@@ -78,6 +107,7 @@ export default function DashboardScreen() {
             data={trips}
             renderItem={({ item }) => <TripCard trip={item} />}
             keyExtractor={(item) => item.id}
+            ListHeaderComponent={<QuickAssetsSection />}
             contentContainerStyle={{ paddingBottom: 100 }}
             showsVerticalScrollIndicator={false}
         />
@@ -119,4 +149,30 @@ const styles = StyleSheet.create({
     countdownValue: { color: colors.primary, fontSize: 64, fontWeight: 'bold', marginVertical: 4 },
     countdownDays: { color: colors.primary, fontSize: 20, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 1 },
     countdownSublabel: { color: colors.textSecondary, fontSize: 12, marginTop: 8 },
+    quickSection: {
+        marginBottom: 24,
+    },
+    quickSectionHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 16,
+    },
+    quickSectionTitle: {
+        fontSize: 20,
+        fontWeight: '700',
+        color: colors.text,
+    },
+    quickSectionLink: {
+        fontSize: 14,
+        color: colors.primary,
+        fontWeight: '600',
+    },
+    assetsScroll: {
+        gap: 12,
+        paddingRight: 20,
+    },
+    assetCardContainer: {
+        width: 280,
+    },
 });
