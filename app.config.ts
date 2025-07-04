@@ -1,5 +1,6 @@
 import { ExpoConfig, ConfigContext } from '@expo/config';
 
+
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: 'SHDWBLK',
@@ -10,7 +11,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   icon: './assets/images/icon.png',
   userInterfaceStyle: 'automatic',
   splash: {
-    image: './assets/images/splash.png',
+    image: './assets/images/splash-icon.png',
     resizeMode: 'contain',
     backgroundColor: '#0a0a0a'
   },
