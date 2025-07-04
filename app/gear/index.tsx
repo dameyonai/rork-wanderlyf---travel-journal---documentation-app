@@ -13,7 +13,7 @@ import { Plus } from 'lucide-react-native';
 
 export default function GearScreen() {
   const router = useRouter();
-  const { gearCategories, gearItems, getItemsByCategory } = useGearStore();
+  const { gearCategories, gearItems, getItemsByCategory, getTotalWeight, getPackedWeight, getPackingProgress } = useGearStore();
   
   const getCategoryIcon = (iconName: string) => {
     switch (iconName) {
@@ -91,21 +91,21 @@ export default function GearScreen() {
         <View style={styles.statsContainer}>
           <View style={styles.statCard}>
             <Text style={styles.statValue}>
-              {gearItems.filter(item => item.isPacked).length}
+              {getPackingProgress().packed}
             </Text>
             <Text style={styles.statLabel}>Items Packed</Text>
           </View>
           
           <View style={styles.statCard}>
             <Text style={styles.statValue}>
-              {gearItems.length - gearItems.filter(item => item.isPacked).length}
+              {getPackingProgress().total - getPackingProgress().packed}
             </Text>
             <Text style={styles.statLabel}>Items Remaining</Text>
           </View>
           
           <View style={styles.statCard}>
             <Text style={styles.statValue}>
-              {gearItems.reduce((total, item) => total + (item.weight || 0), 0).toFixed(1)}
+              {getTotalWeight().toFixed(1)}
             </Text>
             <Text style={styles.statLabel}>Total Weight (kg)</Text>
           </View>

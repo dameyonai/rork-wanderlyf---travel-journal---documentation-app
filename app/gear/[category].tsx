@@ -16,8 +16,8 @@ export default function CategoryScreen() {
   const categoryData = gearCategories.find(cat => cat.id === category);
   const items = getItemsByCategory(category);
   
-  const packedItems = items.filter(item => item.packed);
-  const unpackedItems = items.filter(item => !item.packed);
+  const packedItems = items.filter(item => item.isPacked);
+  const unpackedItems = items.filter(item => !item.isPacked);
   
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
@@ -48,7 +48,7 @@ export default function CategoryScreen() {
         
         <View style={styles.statCard}>
           <Text style={styles.statValue}>
-            {items.reduce((total, item) => total + (item.weightKg || 0), 0).toFixed(1)}
+            {items.reduce((total, item) => total + (item.weight || 0), 0).toFixed(1)}
           </Text>
           <Text style={styles.statLabel}>Weight (kg)</Text>
         </View>

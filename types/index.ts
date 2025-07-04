@@ -29,8 +29,7 @@ export interface Trip {
   waypoints: Waypoint[];
 }
 
-export type GearCategory = 'Camping' | 'Clothing' | 'Electronics' | 'Documents' | 'Toiletries';
-export interface GearItem { id: string; name: string; weightKg: number; notes: string; category: GearCategory; packed: boolean; imageUri?: string; }
+
 export interface VehicleMod { id: string; name: string; description: string; }
 export interface Vehicle { name: string; photoUri: string; modifications: VehicleMod[]; }
 export interface GalleryPhoto { id: string; caption: string; description: string; imageUri: string; }

@@ -17,16 +17,16 @@ import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
 import { Button } from '@/components/Button';
 import { useGearStore } from '@/store/gearStore';
-import type { GearCategory, GearItem } from '@/types';
+import type { GearCategory, GearItem } from '@/types/gear';
 import { Camera, Package, X } from 'lucide-react-native';
 import { generateId } from '@/utils/idGenerator';
 
-const categories: { id: string; name: GearCategory; icon: string }[] = [
+const categories: GearCategory[] = [
   { id: '1', name: 'Camping', icon: 'tent' },
   { id: '2', name: 'Clothing', icon: 'shirt' },
   { id: '3', name: 'Electronics', icon: 'smartphone' },
-  { id: '4', name: 'Documents', icon: 'file' },
-  { id: '5', name: 'Toiletries', icon: 'droplet' },
+  { id: '4', name: 'Cooking', icon: 'utensils' },
+  { id: '5', name: 'First Aid', icon: 'first-aid' },
 ];
 
 export default function NewGearItemScreen() {
@@ -36,7 +36,7 @@ export default function NewGearItemScreen() {
   const [name, setName] = useState('');
   const [weightKg, setWeightKg] = useState('');
   const [notes, setNotes] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<GearCategory>('Camping');
+  const [selectedCategory, setSelectedCategory] = useState<string>('1');
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
@@ -80,9 +80,9 @@ export default function NewGearItemScreen() {
       id: Date.now().toString(),
       name,
       category: selectedCategory,
-      weightKg: parseFloat(weightKg) || 0,
+      weight: parseFloat(weightKg) || 0,
       notes,
-      packed: false,
+      isPacked: false,
       imageUri: imageUri || undefined,
     };
     
@@ -139,19 +139,19 @@ export default function NewGearItemScreen() {
                 key={category.id}
                 style={[
                   styles.categoryButton,
-                  selectedCategory === category.name && styles.selectedCategoryButton,
+                  selectedCategory === category.id && styles.selectedCategoryButton,
                 ]}
-                onPress={() => setSelectedCategory(category.name)}
+                onPress={() => setSelectedCategory(category.id)}
               >
                 <Package size={16} color={
-                  selectedCategory === category.name 
+                  selectedCategory === category.id 
                     ? colors.accent.primary 
                     : colors.text.secondary
                 } />
                 <Text 
                   style={[
                     styles.categoryButtonText,
-                    selectedCategory === category.name && styles.selectedCategoryButtonText,
+                    selectedCategory === category.id && styles.selectedCategoryButtonText,
                   ]}
                 >
                   {category.name}
