@@ -6,7 +6,8 @@ import { colors } from '../constants/colors';
 import { useTripStore } from '../store/tripStore';
 import { format, differenceInCalendarDays } from 'date-fns';
 import { Link } from 'expo-router';
-import { Trip } from '../types';
+import { Trip } from '../types/trip';
+import { Feather } from '@expo/vector-icons';
 
 // --- Reusable Components ---
 
@@ -32,8 +33,8 @@ const CountdownCard = ({ trip }: { trip: Trip }) => {
 
 const TripCard = ({ trip }: { trip: Trip }) => (
     <View style={styles.tripCard}>
-        {trip.vehicleImageUri && (
-            <Image source={{ uri: trip.vehicleImageUri }} style={styles.tripImage} />
+        {trip.coverImageUri && (
+            <Image source={{ uri: trip.coverImageUri }} style={styles.tripImage} />
         )}
         <View style={styles.tripContent}>
             <View style={styles.tripHeaderRow}>
@@ -56,28 +57,44 @@ const TripCard = ({ trip }: { trip: Trip }) => (
 // --- Main Screen ---
 
 export default function DashboardScreen() {
-  const trips = useTripStore((state) => state.trips);
+  const activeTrip = useTripStore((state) => state.getActiveTrip());
   const router = useRouter();
-
-  const handleNewTrip = () => {
-    router.push('/trips/new');
-  };
 
   const handleNewEntry = () => {
     router.push('/journal/new');
   };
 
-  const handleViewAllEntries = () => {
-    router.push('/journal');
+  const handleNewTrip = () => {
+    router.push('/trips/new');
   };
-
-  const activeTrip = useTripStore((state) => state.getActiveTrip());
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.header}>
-        <Text style={styles.appName}>Wanderlyf</Text>
-        <Text style={styles.subtitle}>Your Journey, Your Story</Text>
+        <Text style={styles.appName}>ÖUŦRØAĐƏŘ</Text>
+        <Text style={styles.subtitle}>SHADOW BLACK</Text>
+      </View>
+      
+      <View style={styles.actionsContainer}>
+        <TouchableOpacity 
+          onPress={handleNewEntry}
+          style={[styles.btn, styles.btnPrimary]}
+        >
+          <View style={styles.btnContent}>
+            <Feather name="plus" size={20} color={colors.white} />
+            <Text style={styles.btnText}>NEW ENTRY</Text>
+          </View>
+        </TouchableOpacity>
+        
+        <TouchableOpacity 
+          onPress={() => router.push('/gear')}
+          style={[styles.btn, styles.btnSecondary]}
+        >
+          <View style={styles.btnContent}>
+            <Feather name="briefcase" size={18} color={colors.text} />
+            <Text style={[styles.btnText, {color: colors.text}]}>GEAR</Text>
+          </View>
+        </TouchableOpacity>
       </View>
       
       <ScrollView 
@@ -86,54 +103,18 @@ export default function DashboardScreen() {
         showsVerticalScrollIndicator={false}
       >
         {activeTrip ? (
-          <>
-            <View style={styles.actionButtons}>
-              <TouchableOpacity 
-                onPress={handleNewEntry}
-                style={[styles.actionButton, styles.primaryButton]}
-              >
-                <Text style={styles.buttonText}>+ NEW ENTRY</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                onPress={handleViewAllEntries}
-                style={[styles.actionButton, styles.secondaryButton]}
-              >
-                <Text style={[styles.buttonText, { color: colors.text }]}>🔍 FILTER</Text>
-              </TouchableOpacity>
-            </View>
-            
-            <TripCard trip={activeTrip} />
-            
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Recent Entries</Text>
-              <TouchableOpacity onPress={handleViewAllEntries}>
-                <Text style={styles.viewAll}>View All</Text>
-              </TouchableOpacity>
-            </View>
-            
-            <View style={styles.emptyState}>
-              <Text style={styles.emptyStateText}>
-                No journal entries yet. Start documenting your journey!
-              </Text>
-              <TouchableOpacity 
-                onPress={handleNewEntry}
-                style={[styles.emptyStateButton, styles.primaryButton]}
-              >
-                <Text style={styles.buttonText}>Create First Entry</Text>
-              </TouchableOpacity>
-            </View>
-          </>
+          <TripCard trip={activeTrip} />
         ) : (
           <View style={styles.noTripContainer}>
-            <Text style={styles.noTripTitle}>Welcome to Wanderlyf</Text>
+            <Text style={styles.noTripTitle}>No Active Trip</Text>
             <Text style={styles.noTripText}>
-              Start by creating your first trip to document your journey.
+              Create a new trip from the Settings tab to start your journey.
             </Text>
             <TouchableOpacity 
               onPress={handleNewTrip}
-              style={[styles.noTripButton, styles.primaryButton]}
+              style={[styles.noTripButton, styles.btnPrimary]}
             >
-              <Text style={styles.buttonText}>Create New Trip</Text>
+              <Text style={styles.btnText}>Create New Trip</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -164,39 +145,46 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontSize: 16,
   },
+  actionsContainer: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 20,
+    paddingHorizontal: 20,
+  },
+  btn: {
+    flex: 1,
+    height: 50,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  btnContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  btnPrimary: {
+    backgroundColor: colors.primary,
+  },
+  btnSecondary: {
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  btnText: {
+    color: colors.white,
+    fontWeight: '600',
+    fontSize: 16,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
     paddingHorizontal: 20,
     paddingBottom: 100,
-  },
-  actionButtons: {
-    flexDirection: 'row',
-    gap: 12,
-    marginBottom: 20,
-  },
-  actionButton: {
-    flex: 1,
-    height: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 25,
-  },
-  primaryButton: {
-    backgroundColor: colors.primary,
-  },
-  secondaryButton: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  buttonText: {
-    color: colors.white,
-    fontWeight: '600',
-    fontSize: 16,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
   },
   tripCard: {
     backgroundColor: colors.surface,
@@ -242,25 +230,25 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   countdownCard: {
-    backgroundColor: colors.primaryMuted,
+    backgroundColor: colors.chocolate.muted,
     borderRadius: 12,
     padding: 20,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.chocolate.border,
   },
   countdownLabel: {
     color: colors.textSecondary,
     fontSize: 14,
   },
   countdownValue: {
-    color: colors.primary,
+    color: colors.chocolate.DEFAULT,
     fontSize: 64,
     fontWeight: 'bold',
     marginVertical: 4,
   },
   countdownDays: {
-    color: colors.primary,
+    color: colors.chocolate.DEFAULT,
     fontSize: 20,
     fontWeight: '600',
     textTransform: 'uppercase',
@@ -270,45 +258,6 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     fontSize: 12,
     marginTop: 8,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-    marginTop: 8,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: colors.text,
-  },
-  viewAll: {
-    color: colors.primary,
-    fontWeight: '600',
-    fontSize: 14,
-  },
-  emptyState: {
-    backgroundColor: colors.surface,
-    borderRadius: 16,
-    padding: 24,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: colors.border,
-    marginTop: 16,
-  },
-  emptyStateText: {
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginBottom: 20,
-    fontSize: 16,
-  },
-  emptyStateButton: {
-    minWidth: 200,
-    height: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 25,
   },
   noTripContainer: {
     backgroundColor: colors.surface,
