@@ -1,67 +1,203 @@
-import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import { Link } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, SectionList, TouchableOpacity, TextInput, Alert, Modal } from 'react-native';
 import { colors } from '../../constants/colors';
-import { useGearStore } from '../../store/gearStore';
-import { GearItemCard } from '../../components/GearItemCard';
-import { Plus, Package } from 'lucide-react-native';
+import { useChecklistStore } from '../../store/checklistStore';
+import { ChecklistItemCard } from '../../components/ChecklistItemCard';
+import { Plus, CheckSquare, RotateCcw, Settings } from 'lucide-react-native';
 
 export default function ChecklistTabScreen() {
-  const { gearItems } = useGearStore();
-  const packedItems = gearItems.filter(item => item.packed);
-  const unpackedItems = gearItems.filter(item => !item.packed);
+  const {
+    checklist,
+    initializeFromMaster,
+    toggleItem,
+    addCustomItem,
+    removeItem,
+    resetChecklist,
+    getProgress,
+    getCategoryProgress
+  } = useChecklistStore();
 
-  const packingProgress = gearItems.length > 0 ? (packedItems.length / gearItems.length) * 100 : 0;
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newItemText, setNewItemText] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
+
+  useEffect(() => {
+    initializeFromMaster();
+  }, []);
+
+  const progress = getProgress();
+
+  const handleAddItem = () => {
+    if (!newItemText.trim()) {
+      Alert.alert('Error', 'Please enter item text');
+      return;
+    }
+    if (!selectedCategory) {
+      Alert.alert('Error', 'Please select a category');
+      return;
+    }
+    addCustomItem(selectedCategory, newItemText.trim());
+    setNewItemText('');
+    setShowAddModal(false);
+  };
+
+  const handleRemoveItem = (categoryKey: string, itemId: string) => {
+    Alert.alert(
+      'Remove Item',
+      'Are you sure you want to remove this item?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Remove', style: 'destructive', onPress: () => removeItem(categoryKey, itemId) }
+      ]
+    );
+  };
+
+  const handleResetChecklist = () => {
+    Alert.alert(
+      'Reset Checklist',
+      'This will reset all items to unchecked and remove custom items. Continue?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Reset', style: 'destructive', onPress: resetChecklist }
+      ]
+    );
+  };
+
+  const sectionData = Object.entries(checklist).map(([categoryKey, items]) => {
+    const categoryProgress = getCategoryProgress(categoryKey);
+    return {
+      title: categoryKey,
+      data: items,
+      progress: categoryProgress
+    };
+  });
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Checklist</Text>
-        <Link href="/gear/new" asChild>
-          <TouchableOpacity style={styles.addButton}>
-            <Plus size={24} color={colors.white} />
+        <Text style={styles.headerTitle}>Trip Checklist</Text>
+        <View style={styles.headerActions}>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() => setShowAddModal(true)}
+          >
+            <Plus size={20} color={colors.white} />
           </TouchableOpacity>
-        </Link>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={handleResetChecklist}
+          >
+            <RotateCcw size={20} color={colors.white} />
+          </TouchableOpacity>
+        </View>
       </View>
 
-      {gearItems.length > 0 ? (
-        <>
-          <View style={styles.progressCard}>
-            <View style={styles.progressHeader}>
-              <Package size={24} color={colors.primary} />
-              <Text style={styles.progressTitle}>Packing Progress</Text>
-            </View>
-            <Text style={styles.progressText}>
-              {packedItems.length} of {gearItems.length} items packed
-            </Text>
-            <View style={styles.progressBar}>
-              <View style={[styles.progressFill, { width: `${packingProgress}%` }]} />
-            </View>
-            <Text style={styles.progressPercentage}>{Math.round(packingProgress)}%</Text>
+      {progress.total > 0 && (
+        <View style={styles.progressCard}>
+          <View style={styles.progressHeader}>
+            <CheckSquare size={24} color={colors.primary} />
+            <Text style={styles.progressTitle}>Overall Progress</Text>
           </View>
-
-          <FlatList
-            data={gearItems}
-            renderItem={({ item }) => <GearItemCard item={item} />}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={styles.listContent}
-            showsVerticalScrollIndicator={false}
-          />
-        </>
-      ) : (
-        <View style={styles.emptyState}>
-          <Package size={64} color={colors.textMuted} />
-          <Text style={styles.emptyStateTitle}>No Gear Items</Text>
-          <Text style={styles.emptyStateText}>
-            Start building your packing checklist by adding gear items.
+          <Text style={styles.progressText}>
+            {progress.completed} of {progress.total} items completed
           </Text>
-          <Link href="/gear/new" asChild>
-            <TouchableOpacity style={styles.createButton}>
-              <Text style={styles.createButtonText}>Add First Item</Text>
-            </TouchableOpacity>
-          </Link>
+          <View style={styles.progressBar}>
+            <View style={[styles.progressFill, { width: `${progress.percentage}%` }]} />
+          </View>
+          <Text style={styles.progressPercentage}>{progress.percentage}%</Text>
         </View>
       )}
+
+      <SectionList
+        sections={sectionData}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item, section }) => (
+          <ChecklistItemCard
+            item={item}
+            onToggle={() => toggleItem(section.title, item.id)}
+            onRemove={item.id.startsWith('custom-') ? () => handleRemoveItem(section.title, item.id) : undefined}
+            showRemove={item.id.startsWith('custom-')}
+          />
+        )}
+        renderSectionHeader={({ section }) => (
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>{section.title}</Text>
+            <View style={styles.sectionProgress}>
+              <Text style={styles.sectionProgressText}>
+                {section.progress.completed}/{section.progress.total}
+              </Text>
+              <View style={styles.miniProgressBar}>
+                <View style={[styles.miniProgressFill, { width: `${section.progress.percentage}%` }]} />
+              </View>
+            </View>
+          </View>
+        )}
+        contentContainerStyle={styles.listContent}
+        showsVerticalScrollIndicator={false}
+        stickySectionHeadersEnabled={false}
+      />
+
+      <Modal
+        visible={showAddModal}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowAddModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Add Custom Item</Text>
+            
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Enter item description..."
+              placeholderTextColor={colors.textMuted}
+              value={newItemText}
+              onChangeText={setNewItemText}
+              multiline
+            />
+            
+            <Text style={styles.modalLabel}>Select Category:</Text>
+            <View style={styles.categoryGrid}>
+              {Object.keys(checklist).map((category) => (
+                <TouchableOpacity
+                  key={category}
+                  style={[
+                    styles.categoryButton,
+                    selectedCategory === category && styles.selectedCategoryButton
+                  ]}
+                  onPress={() => setSelectedCategory(category)}
+                >
+                  <Text style={[
+                    styles.categoryButtonText,
+                    selectedCategory === category && styles.selectedCategoryButtonText
+                  ]}>
+                    {category}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            
+            <View style={styles.modalActions}>
+              <TouchableOpacity
+                style={styles.modalCancelButton}
+                onPress={() => {
+                  setShowAddModal(false);
+                  setNewItemText('');
+                  setSelectedCategory('');
+                }}
+              >
+                <Text style={styles.modalCancelText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.modalAddButton}
+                onPress={handleAddItem}
+              >
+                <Text style={styles.modalAddText}>Add Item</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -84,11 +220,15 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: colors.text,
   },
-  addButton: {
+  headerActions: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  actionButton: {
     backgroundColor: colors.primary,
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -139,33 +279,131 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 100,
   },
-  emptyState: {
-    flex: 1,
-    justifyContent: 'center',
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 40,
+    paddingVertical: 16,
+    paddingTop: 24,
   },
-  emptyStateTitle: {
-    fontSize: 24,
+  sectionTitle: {
+    fontSize: 20,
     fontWeight: '700',
     color: colors.text,
-    marginBottom: 12,
-    marginTop: 16,
+    flex: 1,
   },
-  emptyStateText: {
-    fontSize: 16,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: 24,
-    marginBottom: 32,
+  sectionProgress: {
+    alignItems: 'flex-end',
+    gap: 4,
   },
-  createButton: {
+  sectionProgressText: {
+    fontSize: 12,
+    color: colors.textMuted,
+    fontWeight: '600',
+  },
+  miniProgressBar: {
+    width: 60,
+    height: 4,
+    backgroundColor: colors.border,
+    borderRadius: 2,
+    overflow: 'hidden',
+  },
+  miniProgressFill: {
+    height: '100%',
     backgroundColor: colors.primary,
-    paddingHorizontal: 24,
+    borderRadius: 2,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  modalContent: {
+    backgroundColor: colors.surface,
+    borderRadius: 16,
+    padding: 24,
+    width: '100%',
+    maxWidth: 400,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: colors.text,
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  modalInput: {
+    backgroundColor: colors.background,
+    color: colors.text,
+    padding: 16,
+    borderRadius: 12,
+    fontSize: 16,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: colors.border,
+    minHeight: 80,
+    textAlignVertical: 'top',
+  },
+  modalLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 12,
+  },
+  categoryGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 24,
+  },
+  categoryButton: {
+    backgroundColor: colors.background,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  selectedCategoryButton: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  categoryButtonText: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    fontWeight: '600',
+  },
+  selectedCategoryButtonText: {
+    color: colors.white,
+  },
+  modalActions: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  modalCancelButton: {
+    flex: 1,
+    backgroundColor: colors.background,
     paddingVertical: 16,
     borderRadius: 12,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.border,
   },
-  createButtonText: {
+  modalCancelText: {
+    color: colors.textSecondary,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  modalAddButton: {
+    flex: 1,
+    backgroundColor: colors.primary,
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  modalAddText: {
     color: colors.white,
     fontSize: 16,
     fontWeight: '600',
