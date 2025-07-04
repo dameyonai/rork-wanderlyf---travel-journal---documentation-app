@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors } from '../constants/Colors';
+import { colors } from '../constants/colors';
 import { useTripStore } from '../store/tripStore';
 import { format, differenceInCalendarDays } from 'date-fns';
 import { Link } from 'expo-router';
@@ -57,10 +57,28 @@ const TripCard = ({ trip }: { trip: Trip }) => (
 
 export default function DashboardScreen() {
   const trips = useTripStore((state) => state.trips);
+  const router = useRouter();
+
+  const handleNewTrip = () => {
+    router.push('/trips/new');
+  };
+
+  const handleNewEntry = () => {
+    router.push('/journal/new');
+  };
+
+  const handleViewAllEntries = () => {
+    router.push('/journal');
+  };
+
+  const activeTrip = trips.find(trip => trip.isActive) || trips[0];
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <Header />
+      <View style={styles.header}>
+        <Text style={styles.appName}>Wanderlyf</Text>
+        <Text style={styles.subtitle}>Your Journey, Your Story</Text>
+      </View>
       
       <ScrollView 
         style={styles.scrollView}
@@ -70,64 +88,21 @@ export default function DashboardScreen() {
         {activeTrip ? (
           <>
             <View style={styles.actionButtons}>
-              <Button 
-                title="+ NEW ENTRY" 
+              <TouchableOpacity 
                 onPress={handleNewEntry}
-                style={styles.actionButton}
-              />
-              <Button 
-                title="🔍 FILTER" 
-                variant="secondary"
+                style={[styles.actionButton, styles.primaryButton]}
+              >
+                <Text style={styles.buttonText}>+ NEW ENTRY</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
                 onPress={handleViewAllEntries}
-                style={styles.actionButton}
-              />
+                style={[styles.actionButton, styles.secondaryButton]}
+              >
+                <Text style={[styles.buttonText, { color: colors.text }]}>🔍 FILTER</Text>
+              </TouchableOpacity>
             </View>
             
-            <View style={styles.tripCard}>
-              {/* Add vehicle image if it exists */}
-              {activeTrip.coverImageUri && (
-                <Image 
-                  source={{ uri: activeTrip.coverImageUri }} 
-                  style={styles.tripImage}
-                  resizeMode="cover"
-                />
-              )}
-              
-              <View style={styles.tripContent}>
-                <Text style={styles.tripTitle}>{activeTrip.title}</Text>
-                <Text style={styles.tripDates}>
-                  {formatDateRange(activeTrip.startDate, activeTrip.endDate)}
-                </Text>
-                <Text style={styles.tripDescription}>{activeTrip.description}</Text>
-                <Text style={styles.subtitle}>Project Wayfarer</Text>
-
-                {stats?.type === 'countdown' ? (
-                  <View style={styles.countdownContainer}>
-                    <Text style={styles.countdownTitle}>Trip starts in</Text>
-                    <Text style={styles.countdownDays}>{stats.daysUntilStart}</Text>
-                    <Text style={styles.countdownLabel}>
-                      {stats.daysUntilStart === 1 ? 'day' : 'days'}
-                    </Text>
-                    <Text style={styles.countdownSubtext}>
-                      {stats.totalDays} day trip planned
-                    </Text>
-                  </View>
-                ) : (
-                  <View style={styles.statsGrid}>
-                    <StatCard value={stats?.distanceTraveled || 0} label="Kilometers" />
-                    <StatCard value={stats?.placesVisited || 0} label="Places Visited" />
-                    <StatCard value={stats?.photosCount || 0} label="Photos" />
-                    <StatCard value={
-                      stats?.isCompleted ? stats.totalDays : `${stats?.daysElapsed || 0}/${stats?.totalDays || 0}`
-                    } label={
-                      stats?.isCompleted ? 'Total Days' : 'Days Progress'
-                    } />
-                  </View>
-                )}
-              </View>
-            </View>
-            
-            <TripHeader trip={activeTrip} />
+            <TripCard trip={activeTrip} />
             
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Recent Entries</Text>
@@ -136,22 +111,17 @@ export default function DashboardScreen() {
               </TouchableOpacity>
             </View>
             
-            {recentEntries.length > 0 ? (
-              recentEntries.map(entry => (
-                <JournalEntryCard key={entry.id} entry={entry} />
-              ))
-            ) : (
-              <View style={styles.emptyState}>
-                <Text style={styles.emptyStateText}>
-                  No journal entries yet. Start documenting your journey!
-                </Text>
-                <Button 
-                  title="Create First Entry" 
-                  onPress={handleNewEntry}
-                  style={styles.emptyStateButton}
-                />
-              </View>
-            )}
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyStateText}>
+                No journal entries yet. Start documenting your journey!
+              </Text>
+              <TouchableOpacity 
+                onPress={handleNewEntry}
+                style={[styles.emptyStateButton, styles.primaryButton]}
+              >
+                <Text style={styles.buttonText}>Create First Entry</Text>
+              </TouchableOpacity>
+            </View>
           </>
         ) : (
           <View style={styles.noTripContainer}>
@@ -159,16 +129,15 @@ export default function DashboardScreen() {
             <Text style={styles.noTripText}>
               Start by creating your first trip to document your journey.
             </Text>
-            <Button 
-              title="Create New Trip" 
+            <TouchableOpacity 
               onPress={handleNewTrip}
-              style={styles.noTripButton}
-            />
+              style={[styles.noTripButton, styles.primaryButton]}
+            >
+              <Text style={styles.buttonText}>Create New Trip</Text>
+            </TouchableOpacity>
           </View>
         )}
       </ScrollView>
-      
-      <TabBar />
     </SafeAreaView>
   );
 }
@@ -176,7 +145,24 @@ export default function DashboardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.primary,
+    backgroundColor: colors.background,
+  },
+  header: {
+    alignItems: 'center',
+    marginVertical: 20,
+    paddingTop: 20,
+  },
+  appName: {
+    fontSize: 36,
+    fontWeight: '800',
+    color: colors.text,
+    letterSpacing: 1.5,
+    textAlign: 'center',
+  },
+  subtitle: {
+    color: colors.textSecondary,
+    marginTop: 8,
+    fontSize: 16,
   },
   scrollView: {
     flex: 1,
@@ -192,9 +178,28 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     flex: 1,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 25,
+  },
+  primaryButton: {
+    backgroundColor: colors.primary,
+  },
+  secondaryButton: {
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  buttonText: {
+    color: colors.white,
+    fontWeight: '600',
+    fontSize: 16,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   tripCard: {
-    backgroundColor: colors.background.card,
+    backgroundColor: colors.surface,
     borderRadius: 16,
     borderWidth: 1,
     borderColor: colors.border,
@@ -208,85 +213,63 @@ const styles = StyleSheet.create({
   tripContent: {
     padding: 20,
   },
+  tripHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
   tripTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: colors.accent.primary,
-    marginBottom: 8,
+    color: colors.primary,
+    flex: 1,
+  },
+  editButton: {
+    color: colors.primary,
+    fontWeight: '600',
+    fontSize: 16,
   },
   tripDates: {
-    color: colors.text.secondary,
+    color: colors.textSecondary,
     fontSize: 14,
     fontWeight: '500',
     marginBottom: 12,
   },
   tripDescription: {
-    color: colors.text.secondary,
+    color: colors.textSecondary,
     lineHeight: 22,
     marginBottom: 20,
   },
-  subtitle: {
-    color: colors.text.secondary,
-    fontSize: 14,
-    marginTop: 4,
-  },
-  countdownContainer: {
-    alignItems: 'center',
-    paddingVertical: 20,
-    backgroundColor: `${colors.accent.primary}10`,
+  countdownCard: {
+    backgroundColor: colors.primaryMuted,
     borderRadius: 12,
+    padding: 20,
+    alignItems: 'center',
     borderWidth: 1,
-    borderColor: `${colors.accent.primary}30`,
-    marginTop: 16,
-  },
-  countdownTitle: {
-    fontSize: 16,
-    color: colors.text.secondary,
-    marginBottom: 8,
-  },
-  countdownDays: {
-    fontSize: 48,
-    fontWeight: '800',
-    color: colors.accent.primary,
-    lineHeight: 52,
+    borderColor: colors.border,
   },
   countdownLabel: {
-    fontSize: 18,
-    color: colors.accent.primary,
-    fontWeight: '600',
-    marginBottom: 8,
-  },
-  countdownSubtext: {
+    color: colors.textSecondary,
     fontSize: 14,
-    color: colors.text.tertiary,
   },
-  statsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-    marginTop: 16,
+  countdownValue: {
+    color: colors.primary,
+    fontSize: 64,
+    fontWeight: 'bold',
+    marginVertical: 4,
   },
-  statCard: {
-    flex: 1,
-    minWidth: '45%',
-    backgroundColor: `${colors.accent.primary}10`,
-    borderWidth: 1,
-    borderColor: `${colors.accent.primary}30`,
-    borderRadius: 12,
-    padding: 12,
-    alignItems: 'center',
-  },
-  statValue: {
+  countdownDays: {
+    color: colors.primary,
     fontSize: 20,
-    fontWeight: '700',
-    color: colors.accent.primary,
-    marginBottom: 4,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
   },
-  statLabel: {
+  countdownSublabel: {
+    color: colors.textSecondary,
     fontSize: 12,
-    color: colors.text.secondary,
-    fontWeight: '500',
-    textAlign: 'center',
+    marginTop: 8,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -296,16 +279,17 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   sectionTitle: {
-    ...typography.heading,
     fontSize: 20,
+    fontWeight: '700',
+    color: colors.text,
   },
   viewAll: {
-    color: colors.accent.primary,
+    color: colors.primary,
     fontWeight: '600',
     fontSize: 14,
   },
   emptyState: {
-    backgroundColor: colors.background.secondary,
+    backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 24,
     alignItems: 'center',
@@ -314,16 +298,20 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   emptyStateText: {
-    ...typography.body,
+    color: colors.textSecondary,
     textAlign: 'center',
     marginBottom: 20,
-    color: colors.text.secondary,
+    fontSize: 16,
   },
   emptyStateButton: {
     minWidth: 200,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 25,
   },
   noTripContainer: {
-    backgroundColor: colors.background.secondary,
+    backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 24,
     alignItems: 'center',
@@ -332,23 +320,22 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
   noTripTitle: {
-    ...typography.heading,
+    fontSize: 22,
+    fontWeight: '700',
+    color: colors.text,
     marginBottom: 12,
   },
   noTripText: {
-    ...typography.body,
+    fontSize: 16,
     textAlign: 'center',
     marginBottom: 24,
-    color: colors.text.secondary,
+    color: colors.textSecondary,
   },
   noTripButton: {
     minWidth: 200,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 25,
   },
 });
-
-const StatCard = ({ value, label }: { value: string | number; label: string }) => (
-  <View style={styles.statCard}>
-    <Text style={styles.statValue}>{value}</Text>
-    <Text style={styles.statLabel}>{label}</Text>
-  </View>
-);
