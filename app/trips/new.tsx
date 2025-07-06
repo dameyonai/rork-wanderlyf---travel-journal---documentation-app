@@ -17,7 +17,9 @@ import * as ImagePicker from 'expo-image-picker';
 import { format } from 'date-fns';
 import { colors } from '../../constants/colors';
 import { useTripStore } from '../../store/tripStore';
+import { Trip } from '../../types/trip';
 import { Camera, X, ChevronLeft } from 'lucide-react-native';
+import { generateId } from '../../utils/idGenerator';
 
 export default function NewTripScreen() {
   const router = useRouter();
@@ -77,12 +79,21 @@ export default function NewTripScreen() {
     setIsSubmitting(true);
     
     // Create new trip using the store's addTrip method
-    const newTripData = {
+    const newTripData: Trip = {
+      id: generateId(),
       title,
       description,
       startDate: startDate.toISOString(),
       endDate: endDate.toISOString(),
-      vehicleImageUri: imageUri || undefined,
+      coverImageUri: imageUri || undefined,
+      stats: {
+        distanceTraveled: 0,
+        placesVisited: 0,
+        photosCount: 0,
+        daysOnTrip: 0,
+      },
+      locations: [],
+      isActive: true, // Make this the active trip
     };
     
     addTrip(newTripData);
