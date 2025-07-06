@@ -55,9 +55,9 @@ export const GearItemCard: React.FC<GearItemCardProps> = ({
           onPress={handleToggle}
         >
           {item.isPacked ? (
-            <Check size={18} color={colors.success} />
+            <Check size={18} color={colors.primary} />
           ) : (
-            <X size={18} color={colors.error} />
+            <X size={18} color={colors.textMuted} />
           )}
         </TouchableOpacity>
       </TouchableOpacity>
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 8,
-    backgroundColor: colors.background.input,
+    backgroundColor: colors.surface,
   },
   content: {
     flex: 1,
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
   },
   notes: {
     ...typography.small,
-    color: colors.text.tertiary,
+    color: colors.textMuted,
   },
   statusButton: {
     width: 36,
@@ -112,9 +112,9 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   packedButton: {
-    backgroundColor: `${colors.success}20`,
+    backgroundColor: `${colors.primary}20`,
   },
   unpackedButton: {
-    backgroundColor: `${colors.error}20`,
+    backgroundColor: `${colors.textMuted}20`,
   },
 });

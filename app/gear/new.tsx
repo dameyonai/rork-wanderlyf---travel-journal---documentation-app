@@ -114,7 +114,7 @@ export default function NewGearItemScreen() {
               style={styles.imagePicker}
               onPress={handlePickImage}
             >
-              <Camera size={32} color={colors.text.secondary} />
+              <Camera size={32} color={colors.textSecondary} />
               <Text style={styles.imagePickerText}>Add Photo</Text>
             </TouchableOpacity>
           )}
@@ -127,7 +127,7 @@ export default function NewGearItemScreen() {
             value={name}
             onChangeText={setName}
             placeholder="e.g., Hiking Boots, Sleeping Bag"
-            placeholderTextColor={colors.text.tertiary}
+            placeholderTextColor={colors.textMuted}
           />
         </View>
         
@@ -145,8 +145,8 @@ export default function NewGearItemScreen() {
               >
                 <Package size={16} color={
                   selectedCategory === category.id 
-                    ? colors.accent.primary 
-                    : colors.text.secondary
+                    ? colors.primary 
+                    : colors.textSecondary
                 } />
                 <Text 
                   style={[
@@ -168,7 +168,7 @@ export default function NewGearItemScreen() {
             value={weightKg}
             onChangeText={setWeightKg}
             placeholder="0.0"
-            placeholderTextColor={colors.text.tertiary}
+            placeholderTextColor={colors.textMuted}
             keyboardType="decimal-pad"
           />
         </View>
@@ -180,7 +180,7 @@ export default function NewGearItemScreen() {
             value={notes}
             onChangeText={setNotes}
             placeholder="Any additional notes about this item..."
-            placeholderTextColor={colors.text.tertiary}
+            placeholderTextColor={colors.textMuted}
             multiline
             textAlignVertical="top"
           />
@@ -200,7 +200,7 @@ export default function NewGearItemScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.primary,
+    backgroundColor: colors.background,
   },
   scrollView: {
     flex: 1,
@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
   },
   imagePicker: {
     height: 160,
-    backgroundColor: colors.background.secondary,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: colors.border,
@@ -255,23 +255,23 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   input: {
-    backgroundColor: colors.background.input,
+    backgroundColor: colors.surface,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: colors.border,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    color: colors.text.primary,
+    color: colors.text,
     fontSize: 16,
   },
   textArea: {
-    backgroundColor: colors.background.input,
+    backgroundColor: colors.surface,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: colors.border,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    color: colors.text.primary,
+    color: colors.text,
     fontSize: 16,
     minHeight: 100,
     ...Platform.select({
@@ -286,7 +286,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   categoryButton: {
-    backgroundColor: colors.background.input,
+    backgroundColor: colors.surface,
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 10,
@@ -298,16 +298,16 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   selectedCategoryButton: {
-    backgroundColor: `${colors.accent.primary}20`,
-    borderColor: colors.accent.primary,
+    backgroundColor: `${colors.primary}20`,
+    borderColor: colors.primary,
   },
   categoryButtonText: {
-    color: colors.text.secondary,
+    color: colors.textSecondary,
     fontSize: 14,
     fontWeight: '500',
   },
   selectedCategoryButtonText: {
-    color: colors.accent.primary,
+    color: colors.primary,
     fontWeight: '600',
   },
   submitButton: {

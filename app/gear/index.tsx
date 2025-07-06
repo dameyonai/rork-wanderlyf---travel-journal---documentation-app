@@ -18,15 +18,15 @@ export default function GearScreen() {
   const getCategoryIcon = (iconName: string) => {
     switch (iconName) {
       case 'tent':
-        return <Tent size={24} color={colors.text.primary} />;
+        return <Tent size={24} color={colors.text} />;
       case 'shirt':
-        return <Shirt size={24} color={colors.text.primary} />;
+        return <Shirt size={24} color={colors.text} />;
       case 'smartphone':
-        return <Smartphone size={24} color={colors.text.primary} />;
+        return <Smartphone size={24} color={colors.text} />;
       case 'utensils':
-        return <Utensils size={24} color={colors.text.primary} />;
+        return <Utensils size={24} color={colors.text} />;
       default:
-        return <Heart size={24} color={colors.text.primary} />;
+        return <Heart size={24} color={colors.text} />;
     }
   };
   
@@ -129,7 +129,7 @@ export default function GearScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.primary,
+    backgroundColor: colors.background,
   },
   content: {
     flex: 1,
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   addButton: {
-    backgroundColor: colors.accent.primary,
+    backgroundColor: colors.primary,
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
   categoryCard: {
     width: 120,
     height: 120,
-    backgroundColor: colors.background.secondary,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     marginRight: 12,
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: `${colors.accent.primary}20`,
+    backgroundColor: `${colors.primary}20`,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
   },
   categoryCount: {
     ...typography.small,
-    color: colors.text.tertiary,
+    color: colors.textMuted,
     marginTop: 4,
   },
   statsContainer: {
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: colors.background.secondary,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',
@@ -210,12 +210,12 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 20,
     fontWeight: '700',
-    color: colors.accent.primary,
+    color: colors.primary,
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 12,
-    color: colors.text.secondary,
+    color: colors.textSecondary,
     fontWeight: '500',
     textAlign: 'center',
   },

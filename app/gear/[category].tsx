@@ -85,7 +85,7 @@ export default function CategoryScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.primary,
+    backgroundColor: colors.background,
   },
   header: {
     padding: 20,
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: colors.background.secondary,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',
@@ -109,12 +109,12 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 20,
     fontWeight: '700',
-    color: colors.accent.primary,
+    color: colors.primary,
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 12,
-    color: colors.text.secondary,
+    color: colors.textSecondary,
     fontWeight: '500',
     textAlign: 'center',
   },
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
     ...typography.body,
     textAlign: 'center',
     marginBottom: 24,
-    color: colors.text.secondary,
+    color: colors.textSecondary,
   },
   emptyStateButton: {
     minWidth: 200,
