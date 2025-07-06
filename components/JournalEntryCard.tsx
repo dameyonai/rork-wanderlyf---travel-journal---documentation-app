@@ -57,7 +57,7 @@ export const JournalEntryCard: React.FC<JournalEntryCardProps> = ({
             compact ? styles.compactImagePlaceholder : styles.imagePlaceholder,
             styles.imagePlaceholderContent
           ]}>
-            <Camera size={32} color={colors.text.tertiary} />
+            <Camera size={32} color={colors.textMuted} />
             <Text style={styles.imagePlaceholderText}>Tap to add photo</Text>
             <TouchableOpacity 
               style={styles.editOverlay}
@@ -73,7 +73,7 @@ export const JournalEntryCard: React.FC<JournalEntryCardProps> = ({
             <View>
               <Text style={styles.date}>{formatDate(entry.date)}</Text>
               <View style={styles.locationContainer}>
-                <Feather name="map-pin" size={12} color={colors.text.tertiary} />
+                <Feather name="map-pin" size={12} color={colors.textMuted} />
                 <Text style={styles.location}>{entry.location.name}</Text>
               </View>
             </View>
@@ -114,19 +114,19 @@ const styles = StyleSheet.create({
   imagePlaceholder: {
     width: '100%',
     height: 200,
-    backgroundColor: colors.background.secondary,
+    backgroundColor: colors.surface,
   },
   compactImagePlaceholder: {
     width: '100%',
     height: 120,
-    backgroundColor: colors.background.secondary,
+    backgroundColor: colors.surface,
   },
   imagePlaceholderContent: {
     justifyContent: 'center',
     alignItems: 'center',
   },
   imagePlaceholderText: {
-    color: colors.text.tertiary,
+    color: colors.textMuted,
     fontSize: 14,
   },
   content: {
@@ -139,12 +139,12 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   date: {
-    color: colors.accent.primary,
+    color: colors.primary,
     fontWeight: '600',
     fontSize: 14,
   },
   location: {
-    color: colors.text.tertiary,
+    color: colors.textMuted,
     fontSize: 13,
     marginLeft: 4,
   },
@@ -154,13 +154,13 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   categoryContainer: {
-    backgroundColor: `${colors.accent.primary}20`,
+    backgroundColor: `${colors.primary}20`,
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 12,
   },
   category: {
-    color: colors.accent.primary,
+    color: colors.primary,
     fontSize: 12,
     fontWeight: '600',
   },
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
   text: {
     ...typography.body,
     fontSize: 14,
-    color: colors.text.secondary,
+    color: colors.textSecondary,
     lineHeight: 20,
   },
   imageContainer: {

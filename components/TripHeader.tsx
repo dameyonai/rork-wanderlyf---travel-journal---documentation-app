@@ -45,7 +45,7 @@ export const TripHeader: React.FC<TripHeaderProps> = ({ trip }) => {
 const styles = StyleSheet.create({
   title: {
     ...typography.heading,
-    color: colors.accent.primary,
+    color: colors.primary,
     marginBottom: 8,
   },
   dates: {
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
   },
   description: {
     ...typography.body,
-    color: colors.text.secondary,
+    color: colors.textSecondary,
     marginBottom: 20,
     lineHeight: 22,
   },
@@ -67,9 +67,9 @@ const styles = StyleSheet.create({
   statCard: {
     flex: 1,
     minWidth: '45%',
-    backgroundColor: `${colors.accent.primary}10`,
+    backgroundColor: `${colors.primary}10`,
     borderWidth: 1,
-    borderColor: `${colors.accent.primary}30`,
+    borderColor: `${colors.primary}30`,
     borderRadius: 12,
     padding: 12,
     alignItems: 'center',
@@ -77,12 +77,12 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 20,
     fontWeight: '700',
-    color: colors.accent.primary,
+    color: colors.primary,
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 12,
-    color: colors.text.secondary,
+    color: colors.textSecondary,
     fontWeight: '500',
   },
 });
