@@ -15,7 +15,7 @@ import {
 import { useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import { format } from 'date-fns';
-import { colors } from '../../constants/Colors';
+import { colors } from '../../constants/colors';
 import { useTripStore } from '../../store/tripStore';
 import { Camera, X, ChevronLeft } from 'lucide-react-native';
 
