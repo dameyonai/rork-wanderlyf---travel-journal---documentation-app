@@ -1,12 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, ScrollView } from 'react-native';
-import { useTripStore } from '@/store/tripStore';
-import { useAssetStore } from '@/store/assetStore';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { useRouter } from 'expo-router';
 import { colors } from '@/constants/colors';
+import { useTripStore } from '@/store/tripStore';
 import { format, differenceInCalendarDays } from 'date-fns';
 import { Link } from 'expo-router';
 import { Trip } from '@/types';
-import { AssetCard } from '@/components/AssetCard';
+import { Plus, MapPin, Settings, Camera } from 'lucide-react-native';
 
 // --- Reusable Components ---
 
@@ -53,126 +53,254 @@ const TripCard = ({ trip }: { trip: Trip }) => (
     </View>
 );
 
-const QuickAssetsSection = () => {
-    const { assets } = useAssetStore();
-    const recentAssets = assets.slice(0, 3);
 
-    if (assets.length === 0) return null;
-
-    return (
-        <View style={styles.quickSection}>
-            <View style={styles.quickSectionHeader}>
-                <Text style={styles.quickSectionTitle}>Digital Assets</Text>
-                <Link href="/assets/index" asChild>
-                    <TouchableOpacity>
-                        <Text style={styles.quickSectionLink}>View All</Text>
-                    </TouchableOpacity>
-                </Link>
-            </View>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.assetsScroll}>
-                {recentAssets.map((asset) => (
-                    <View key={asset.id} style={styles.assetCardContainer}>
-                        <AssetCard asset={asset} compact />
-                    </View>
-                ))}
-            </ScrollView>
-        </View>
-    );
-};
 
 // --- Main Screen ---
 
 export default function DashboardScreen() {
-  const trips = useTripStore((state) => state.trips);
+  const activeTrip = useTripStore((state) => state.getActiveTrip());
+  const router = useRouter();
+
+  const handleNewTrip = () => {
+    router.push('/trips/new');
+  };
 
   return (
     <View style={styles.container}>
-        <View style={styles.header}>
-            <Text style={styles.appName}>SHDWBLK OUTBACK</Text>
-            <Text style={styles.subtitle}>Project Wayfarer</Text>
-        </View>
-
-        <View style={styles.actionsContainer}>
-            <Link href="/journal/new" asChild>
-                <TouchableOpacity style={styles.btnPrimary}>
-                    <Text style={styles.btnText}>+ NEW ENTRY</Text>
-                </TouchableOpacity>
-            </Link>
-            <TouchableOpacity style={styles.btnSecondary}>
-                <Text style={styles.btnText}>🔍 FILTER</Text>
+      <View style={styles.header}>
+        <Text style={styles.appName}>SHDWBLK OUTBACK</Text>
+        <Text style={styles.subtitle}>Project Wayfarer</Text>
+      </View>
+      
+      {/* Four buttons in 2x2 grid */}
+      <View style={styles.buttonGrid}>
+        <View style={styles.buttonRow}>
+          <Link href="/journal/new" asChild>
+            <TouchableOpacity style={[styles.button, styles.primaryButton]}>
+              <Plus color="white" size={24} />
+              <Text style={[styles.buttonText, styles.primaryButtonText]}>NEW ENTRY</Text>
             </TouchableOpacity>
+          </Link>
+          
+          <Link href="/(tabs)/map" asChild>
+            <TouchableOpacity style={[styles.button, styles.secondaryButton]}>
+              <MapPin color="#E5E7EB" size={24} />
+              <Text style={[styles.buttonText, styles.secondaryButtonText]}>MAP</Text>
+            </TouchableOpacity>
+          </Link>
         </View>
-
-        <FlatList
-            data={trips}
-            renderItem={({ item }) => <TripCard trip={item} />}
-            keyExtractor={(item) => item.id}
-            ListHeaderComponent={<QuickAssetsSection />}
-            contentContainerStyle={{ paddingBottom: 100 }}
-            showsVerticalScrollIndicator={false}
-        />
+        
+        <View style={styles.buttonRow}>
+          <Link href="/gear" asChild>
+            <TouchableOpacity style={[styles.button, styles.secondaryButton]}>
+              <Settings color="#E5E7EB" size={24} />
+              <Text style={[styles.buttonText, styles.secondaryButtonText]}>GEAR</Text>
+            </TouchableOpacity>
+          </Link>
+          
+          <Link href="/(tabs)/gallery" asChild>
+            <TouchableOpacity style={[styles.button, styles.secondaryButton]}>
+              <Camera color="#E5E7EB" size={24} />
+              <Text style={[styles.buttonText, styles.secondaryButtonText]}>GALLERY</Text>
+            </TouchableOpacity>
+          </Link>
+        </View>
+      </View>
+      
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {activeTrip ? (
+          <TripCard trip={activeTrip} />
+        ) : (
+          <View style={styles.noTripContainer}>
+            <Text style={styles.noTripTitle}>No Active Trip</Text>
+            <Text style={styles.noTripText}>
+              Create a new trip from the Settings tab to start your journey.
+            </Text>
+            <TouchableOpacity 
+              onPress={handleNewTrip}
+              style={[styles.noTripButton, styles.primaryButton]}
+            >
+              <Text style={styles.buttonText}>Create New Trip</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: colors.background, paddingHorizontal: 20 },
-    header: { alignItems: 'center', marginVertical: 20, paddingTop: 20 },
-    appName: { fontSize: 28, fontWeight: '800', color: colors.text, letterSpacing: 1.5, textAlign: 'center' },
-    subtitle: { color: colors.textSecondary, marginTop: 8, fontSize: 16 },
-    actionsContainer: { flexDirection: 'row', gap: 12, marginBottom: 20 },
-    btnPrimary: { flex: 1, backgroundColor: colors.primary, padding: 16, borderRadius: 12, alignItems: 'center' },
-    btnSecondary: { flex: 1, backgroundColor: colors.surface, padding: 16, borderRadius: 12, alignItems: 'center', borderWidth: 1, borderColor: colors.border },
-    btnText: { color: colors.text, fontWeight: '600' },
-    tripCard: { 
-        backgroundColor: colors.surface, 
-        borderRadius: 16, 
-        borderWidth: 1, 
-        borderColor: colors.border,
-        marginBottom: 20,
-        overflow: 'hidden',
-    },
-    tripImage: {
-        width: '100%',
-        height: 200,
-    },
-    tripContent: {
-        padding: 24,
-    },
-    tripHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-    tripTitle: { fontSize: 24, fontWeight: '700', color: colors.primary, marginBottom: 8, flex: 1 },
-    editButton: { color: colors.primary, fontWeight: '600', fontSize: 16 },
-    tripDates: { color: colors.textSecondary, marginBottom: 16 },
-    tripDescription: { color: colors.textSecondary, lineHeight: 22, marginBottom: 24 },
-    countdownCard: { backgroundColor: colors.primaryMuted, borderRadius: 12, padding: 20, alignItems: 'center', borderWidth: 1, borderColor: colors.primary + '40' },
-    countdownLabel: { color: colors.textSecondary, fontSize: 14 },
-    countdownValue: { color: colors.primary, fontSize: 64, fontWeight: 'bold', marginVertical: 4 },
-    countdownDays: { color: colors.primary, fontSize: 20, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 1 },
-    countdownSublabel: { color: colors.textSecondary, fontSize: 12, marginTop: 8 },
-    quickSection: {
-        marginBottom: 24,
-    },
-    quickSectionHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 16,
-    },
-    quickSectionTitle: {
-        fontSize: 20,
-        fontWeight: '700',
-        color: colors.text,
-    },
-    quickSectionLink: {
-        fontSize: 14,
-        color: colors.primary,
-        fontWeight: '600',
-    },
-    assetsScroll: {
-        gap: 12,
-        paddingRight: 20,
-    },
-    assetCardContainer: {
-        width: 280,
-    },
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  header: {
+    alignItems: 'center',
+    marginVertical: 20,
+    paddingTop: 20,
+  },
+  appName: {
+    fontSize: 32,
+    fontWeight: '800',
+    color: colors.text,
+    letterSpacing: 1.5,
+    textAlign: 'center',
+  },
+  subtitle: {
+    color: colors.textSecondary,
+    marginTop: 8,
+    fontSize: 16,
+  },
+  
+  // NEW: 4-button grid styles
+  buttonGrid: {
+    paddingHorizontal: 20,
+    marginBottom: 20,
+    gap: 12,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  button: {
+    flex: 1,
+    height: 80,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 8,
+  },
+  primaryButton: {
+    backgroundColor: colors.primary,
+  },
+  secondaryButton: {
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  buttonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  primaryButtonText: {
+    color: colors.white,
+  },
+  secondaryButtonText: {
+    color: '#E5E7EB',
+  },
+  
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: 20,
+    paddingBottom: 100,
+  },
+  tripCard: {
+    backgroundColor: colors.surface,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: colors.border,
+    marginBottom: 16,
+    overflow: 'hidden',
+  },
+  tripImage: {
+    width: '100%',
+    height: 200,
+  },
+  tripContent: {
+    padding: 20,
+  },
+  tripHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  tripTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: colors.primary,
+    flex: 1,
+  },
+  editButton: {
+    color: colors.primary,
+    fontWeight: '600',
+    fontSize: 16,
+  },
+  tripDates: {
+    color: colors.textSecondary,
+    fontSize: 14,
+    fontWeight: '500',
+    marginBottom: 12,
+  },
+  tripDescription: {
+    color: colors.textSecondary,
+    lineHeight: 22,
+    marginBottom: 20,
+  },
+  countdownCard: {
+    backgroundColor: colors.chocolate.muted,
+    borderRadius: 12,
+    padding: 20,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.chocolate.border,
+  },
+  countdownLabel: {
+    color: colors.textSecondary,
+    fontSize: 14,
+  },
+  countdownValue: {
+    color: colors.chocolate.DEFAULT,
+    fontSize: 64,
+    fontWeight: 'bold',
+    marginVertical: 4,
+  },
+  countdownDays: {
+    color: colors.chocolate.DEFAULT,
+    fontSize: 20,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+  },
+  countdownSublabel: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    marginTop: 8,
+  },
+  noTripContainer: {
+    backgroundColor: colors.surface,
+    borderRadius: 16,
+    padding: 24,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.border,
+    marginTop: 40,
+  },
+  noTripTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: colors.text,
+    marginBottom: 12,
+  },
+  noTripText: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 24,
+    color: colors.textSecondary,
+  },
+  noTripButton: {
+    minWidth: 200,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 25,
+  },
 });
