@@ -2,11 +2,11 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors } from '../constants/colors';
-import { useTripStore } from '../store/tripStore';
+import { colors } from '@/constants/colors';
+import { useTripStore } from '@/store/tripStore';
 import { format, differenceInCalendarDays } from 'date-fns';
 import { Link } from 'expo-router';
-import { Trip } from '../types/trip';
+import { Trip } from '@/types';
 import { Feather } from '@expo/vector-icons';
 
 // --- Reusable Components ---

@@ -17,18 +17,40 @@ export interface JournalEntry {
   photoLocation?: Location;
 }
 
-export interface Trip {
-  id:string;
-  title: string;
-  startDate: string;
-  endDate: string;
-  description: string;
-  journalEntries: JournalEntry[];
-  vehicleImageUri?: string; 
-  checklist?: Checklist;
-  waypoints: Waypoint[];
+export interface TripStats {
+  distanceTraveled: number;
+  placesVisited: number;
+  photosCount: number;
+  daysOnTrip: number;
 }
 
+export interface Trip {
+  id: string;
+  title: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  coverImageUri?: string;
+  vehicleImageUri?: string;
+  stats: TripStats;
+  locations: Location[];
+  isActive: boolean;
+  journalEntries?: JournalEntry[];
+  checklist?: Checklist;
+  waypoints?: Waypoint[];
+}
+
+
+export type GearCategory = 'Camping' | 'Clothing' | 'Electronics' | 'Documents' | 'Toiletries';
+
+export interface Photo {
+  id: string;
+  tripId: string;
+  imageUri: string;
+  caption?: string;
+  location: Location;
+  date: string;
+}
 
 export interface VehicleMod { id: string; name: string; description: string; }
 export interface Vehicle { name: string; photoUri: string; modifications: VehicleMod[]; }
